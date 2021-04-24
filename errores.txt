@@ -1,0 +1,6 @@
+Errores que manejaré en la API
+
+1001: Usuario Existente
+1002: Empresa Existente
+1003: Usuario no encontrado
+1004: Contraseña incorrecta
