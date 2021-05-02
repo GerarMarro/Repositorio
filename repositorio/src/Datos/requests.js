@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {registrar, getPregunta, updPass, authUser, upduser, getuser, reguser, getuseradmin} from './rutas';
+import {registrar, getPregunta, updPass, authUser, upduser, getuser, reguser, getuseradmin, deluser} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -66,7 +66,8 @@ function GetUser(id, user) {
 }
 
 function RegUser(datos){
-    console.log(datos)
+    console.log("Reguser", datos)
+    
     return axios.post(reguser, {
             foto: datos.foto,
             admin: datos.admin,
@@ -91,6 +92,11 @@ function GetUserAdmin(id) {
     });
 }
 
+function DelUser(id) {
+    
+    return axios.delete(deluser + id);
+}
+
 export {
     Registrar, 
     GetPregunta, 
@@ -99,5 +105,6 @@ export {
     ActualizarUsuario, 
     GetUser, 
     RegUser,
-    GetUserAdmin
+    GetUserAdmin,
+    DelUser
 };

@@ -1,20 +1,27 @@
 import React from 'react';
-import { Table, Input, Button, message, Breadcrumb, Card } from 'antd';
+import { Table, Input, Button, message, Breadcrumb, Card, Modal, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
-import { GetUserAdmin } from '../../Datos/requests';
-
+import { SearchOutlined } from '@ant-design/icons';
+import { GetUserAdmin, DelUser } from '../../Datos/requests';
+import UserInfo from './InformacionUser';
 
 const key = 'updatable';
+const { confirm } = Modal;
 
 class VerUsuarios extends React.Component {
-    
+    constructor(props){
+      super(props);
+      this.handleModal = this.handleModal.bind(this);
+    }
     state = {
         searchText: '',
         searchedColumn: '',
         usuarios: [],
+        visible:false,
+        verUser: {},
+        eliminados: []
     };
-    
+    accion = "";
     componentDidMount(){
       message.loading({ content: 'Obteniendo la información...', key });
       GetUserAdmin(this.props.id)
@@ -95,11 +102,48 @@ class VerUsuarios extends React.Component {
         clearFilters();
         this.setState({ searchText: '' });
       };
+      
+      handleModal = (event) =>{
+        
+        this.setState({
+          visible:true,
+          verUser: JSON.parse(event.target.name)
+        }, () =>{})
+        
+      }
+  
+      handleOk = () => {
+        
+        this.setState({
+          visible: false,
+        });
+      };
+    
+      showConfirm = (event) => {
+        var usuario = JSON.parse(event.target.name), nombre = usuario.nombre, id = usuario._id;
+        //  var elim = false;
+        confirm({
+          title: '¿Está seguro que desea eliminar a '+nombre+'?',
+          content: 'Si elimina este usuario no podrá recuperarse ya que se eliminará completamente de la base de datos',
+          onOk() {
+            message.loading({ content: 'Esperamos que sepas lo que haces...', key });
+            DelUser(id)
+            .then(res => { 
+              setTimeout( message.success({ content: 'Usuarios eliminado correctamente!', key }), 2000000);
+              window.location.reload();
+            })
+            .catch(error =>{
+              message.error({ content: 'Algo salió mal', key });
+              console.error(error);
+            })
+          }
+        });
+      }
       bread = 
       ( 
           <Breadcrumb>
               <Breadcrumb.Item>Usuarios</Breadcrumb.Item>
-              <Breadcrumb.Item>Crear Usuario</Breadcrumb.Item>
+              <Breadcrumb.Item>Ver Usuarios</Breadcrumb.Item>
           </Breadcrumb>
       )
       render() {
@@ -108,6 +152,7 @@ class VerUsuarios extends React.Component {
             title: 'Nombre',
             dataIndex: 'nombre',
             key: 'nombre',
+            
             ...this.getColumnSearchProps('nombre'),
           },
           {
@@ -123,22 +168,40 @@ class VerUsuarios extends React.Component {
             ...this.getColumnSearchProps('departamento'),
           },
           {
-            title: 'Action',
-            key: 'action',
-            render: () => (
+            title: 'Acción',
+            key: '_id',
+            ...this.getColumnSearchProps('_id'),
+            render: (record) => (
               <span>
-                <Button.Group>
-                  <Button type="danger" icon={<DeleteOutlined />} />
-                  <Button type="primary" icon={<EyeOutlined />} />
-                </Button.Group>
+                <span>
+                  <a href="#" onClick={this.handleModal} name={JSON.stringify(record)}>Ver a {record.nombre}</a>
+                  <Divider type="vertical" />
+                  <a href="#" onClick={this.showConfirm} name={JSON.stringify(record)}>Eliminar</a>
+                </span>
               </span>
             )
           },
         ];
         return (
-          <Card title={this.bread}  style={{ width: "90%" }}>
-            <Table columns={columns} dataSource={this.state.usuarios} pagination={{ pageSize: 10 }} style={{width:"100%"}} />;
-          </Card>
+          <>
+            <Card title={this.bread}  style={{ width: "90%" }}>
+              <Table columns={columns} dataSource={this.state.usuarios} pagination={{ pageSize: 10 }} style={{width:"100%"}} />;
+            </Card>
+            <Modal
+              title="Ver usuario"
+              visible={this.state.visible}
+              onOk={this.handleOk}
+              width="65%"
+              footer={
+                <Button key="submit" type="primary" onClick={this.handleOk}>
+                  Ok
+                </Button>
+              }
+              destroyOnClose
+            >
+              <UserInfo usuario={this.state.verUser} />
+            </Modal>
+          </>
         )    
       }
 }

@@ -8,14 +8,15 @@ import {
     Input, Space, Card, 
     Button, Upload, Select, 
     message, Typography,
-    Avatar, Breadcrumb
+    Avatar, Breadcrumb, Modal
 } from 'antd';
-import {RegUser} from '../../Datos/requests';
+import { RegUser } from '../../Datos/requests';
 import 'material-icons';
 
 const {Text} = Typography;
 const { Option } = Select;
 const key = 'updatable';
+const { confirm } = Modal;
 
 class CrearUsuarios extends React.Component {
     
@@ -65,7 +66,8 @@ class CrearUsuarios extends React.Component {
 
     handleChangeSelectDepartamentos = (value) => {
         this.setState({
-            departamento: value
+            departamento: value,
+            
             }, ()=>{
             /*console.log(this.state);
             console.clear();*/
@@ -78,25 +80,69 @@ class CrearUsuarios extends React.Component {
     }
     /**Guardar */
 
-    GuardarUsuario = () =>{
-        message.loading({ content: 'Estamos creando el nuevo usuario', key });
-        console.log(this.state);
+    
+
+    handleUpload = ( info ) => {
+
+        var file = info.fileList[0];
+        if(this.VerificateImg(file)){
+            this.setState({ foto: file });
+        }
+    };
+    VerificateImg = (file) => {
+
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+          message.error('Solo puedes subir imagenes formato jpg o png!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          message.error('La imagen debe ser menor a 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    }
+    handleChangeSelect = value => {
+        this.setState({ pregunta: value });
+    }   
+    
+    showConfirm = (event) => {
+        var Usuario = {};
         this.setState({
             admin: this.usuario._id,
             usuario: this.state.usuario +"@"+ this.state.empresas.nombre.trim(),
-            tipo: 1}, ()=>{
-                //console.log(this.state)
+            foto: 0,
+            tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo}, ()=>{
+                Usuario = {
+                    foto: this.state.foto,
+                    admin: this.state.admin,
+                    nombre: this.state.nombre,
+                    apellido: this.state.apellido,
+                    usuario: this.state.usuario,
+                    contraseña: this.state.contraseña,
+                    email: this.state.email,
+                    pregunta: this.state.pregunta,
+                    respuesta: this.state.respuesta,
+                    departamento: this.state.departamento,
+                    tipo: this.state.tipo
+                }
             }
         )
-        RegUser(this.state).then(res =>{
-            message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
-            console.log("res", res.data);
-        }).catch(err =>{
-            message.error({ content: 'Algo salió mal', key });
-            console.error("Error: ", err)
+        confirm({
+          title: '¿Está seguro que desea crear a '+this.state.nombre+'?',
+          content: '',
+          onOk() {
+            message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
+            
+            RegUser(Usuario).then(res =>{
+                message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
+                console.log("res", res.data);
+            }).catch(err =>{
+                message.error({ content: 'Algo salió mal', key });
+                console.error("Error: ", err)
+            });
+          }
         });
-    }
-
+      }
     /** Iconos */
     checkPwd = () =>{
         if(this.state.contraseña === this.state.confirmacion){
@@ -134,9 +180,10 @@ class CrearUsuarios extends React.Component {
         var letras = "NU";
         return(
             <>
+                
                 <Card title={this.bread} bordered={true} style={{ width: 900, height:"100%", }}
                     actions={[
-                    <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' onClick={this.GuardarUsuario}>
+                    <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' onClick={this.showConfirm}>
                         Guardar
                     </Button>
                 ]}>
