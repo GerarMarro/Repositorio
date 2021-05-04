@@ -9,6 +9,7 @@ use App\Models\Empresas;
 use App\Models\Usuaios;
 use App\Models\Departamentos;
 use App\Mail\RestauracionContraseña; 
+use App\Models\Logs; 
 
 class AdministradoresController extends Controller
 {
@@ -74,6 +75,12 @@ class AdministradoresController extends Controller
                 }
 
                 $usuario = Administradores::all()->last();
+                Logs::create([
+                    'usuario' => $usuario->_id,
+                    'admin' => $usuario->_id,
+                    'titulo' => "Registro de administrador nuevo",
+                    'descripcion' => "Se ha registrado a ".$request->nombre." como nuevo adminsitrador en la base de datos."
+                ]);
                 
                 Empresas::create([
                     'nombre' => $request->empresa,
@@ -159,7 +166,12 @@ class AdministradoresController extends Controller
         
         //Extraigo el nuevo usuario con la contraseña modificada
         $usuario = Administradores::where('_id', '=', $request->id)->first();
-
+        Logs::create([
+            'usuario' => $usuario->_id,
+            'admin' => $usuario->_id,
+            'titulo' => "Modificación de contraseña",
+            'descripcion' => "Se ha modificado la contraseña de ".$usuario->nombre."."
+        ]);
         //Lo retorno
         return json_encode($usuario);
     }
@@ -207,7 +219,6 @@ class AdministradoresController extends Controller
 
                     //Le añado las empresas con sus dptos al usuario 
                     $admin->empresas = $empresas;
-
                     //Lo retorno
                     return json_encode($admin);
 
@@ -246,7 +257,12 @@ class AdministradoresController extends Controller
                 'pregunta' => $request->pregunta,
                 'respuesta' => $request->respuesta,
             ]);    
-
+            Logs::create([
+                'usuario' => $request->_id,
+                'admin' => $request->_id,
+                'titulo' => "Modificar usuario",
+                'descripcion' => "Se ha modificado a ".$admin->nombre."."
+            ]);
             return json_encode($admin); 
         }   
     }
@@ -291,6 +307,21 @@ class AdministradoresController extends Controller
         }
 
         return json_encode($usuarios);
+    }
+
+    public function GetNotificaciones($id){
+        $logs = Logs::where('admin', '=', $id)->get();
+        
+        foreach ($logs as $l) {
+            if ($l->usuarioRegistrado != null) {
+                $l->esusuario = true;
+            }else{
+                $l->esusuario = false;
+                $l->administrador = Administradores::where('_id', '=', $id)->first();
+            }
+        }
+        
+        return json_encode($logs);
     }
 }
 

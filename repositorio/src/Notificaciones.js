@@ -1,6 +1,9 @@
 import React from 'react';
-import { List, Avatar, Empty } from 'antd';
+import { List, Avatar, Empty, Typography, message, Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
+import {coloresRandom} from './Componentes/Funciones';
+
+const { Text } = Typography;
 
 class Notificaciones extends React.Component {
 
@@ -11,39 +14,57 @@ class Notificaciones extends React.Component {
     };
 
     componentDidMount() {
-        var info = JSON.parse(localStorage.getItem("Notificaciones"));
         this.setState({
-            data: info
+            data: this.props.notificaciones.reverse()
+        }, ()=>{
+            console.log(this.state.data)
         });
+    }
+
+    controllerAvatar = (item, nombre, apellido) =>{
+        if (item.foto !== undefined && item.foto !== 0) {
+            return <Avatar src={item.foto.thumbUrl} />;
+        }else{
+            var letras = nombre.substr(0, 1) + apellido.substr(0, 1);
+            return <Avatar style={{backgroundColor:coloresRandom()}}>{letras}</Avatar>;
+        }
     }
 
     componentRender = () =>{
         if (this.state.data !== null && this.state.data !== undefined) {
             return(
                 <>
-                    <div className="demo-infinite-container">
-                        <InfiniteScroll
-                        initialLoad={false}
-                        pageStart={0}
-                        useWindow={false}
+                    <div className="demo-infinite-container" style={{width:"100%", height:"300px"}}>
+                    
+                        <List
+                            dataSource={this.state.data}
+                            size="small"
+                            pagination={{
+                                onChange: page => {
+                                  console.log(page);
+                                },
+                                pageSize: 3,
+                            }}
+                            renderItem={item => (
+                            <List.Item key={item.id}>
+                                <List.Item.Meta
+                                avatar={
+                                    item.usuario_registrado !== null ? this.controllerAvatar(item.usuario_registrado, item.usuario_registrado.nombre, item.usuario_registrado.apellido) : this.controllerAvatar(item.administrador, item.administrador.nombre, item.administrador.apellido)
+                                }
+                                title={<h4 style={{cursor:"default"}}>{item.titulo}</h4>}
+                                description={item.descripcion}
+                                />
+                                
+                                <Text level={'6'} style={{marginLeft:"20px"}}>{ new Date(item.created_at).toLocaleDateString()+ " " + new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Text>
+                            </List.Item>
+                            )}
                         >
-                            <List
-                                dataSource={this.state.data}
-                                renderItem={item => (
-                                <List.Item key={item.id}>
-                                    <List.Item.Meta
-                                    avatar={
-                                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                    }
-                                    title={<a href="https://ant.design">{item.name.last}</a>}
-                                    description={item.email}
-                                    />
-                                    <div>Content</div>
-                                </List.Item>
-                                )}
-                            >
-                            </List>
-                        </InfiniteScroll>
+                            {this.state.loading && this.state.hasMore && (
+                                <div className="demo-loading-container">
+                                <Spin />
+                                </div>
+                            )}
+                        </List>
                     </div>
                 </>
             );

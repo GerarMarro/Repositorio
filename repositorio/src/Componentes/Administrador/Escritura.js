@@ -31,7 +31,7 @@ class Escritura extends React.Component {
                     </p>
                     <p className="ant-upload-text">Click o arrastra para cargar un archivo</p>
                     <p className="ant-upload-hint">
-                    Recuerda que solo pueden subir archivos con extensión .csv, .txt o .xlsx
+                      Recuerda que solo pueden subir archivos con extensión .csv, .txt o .xlsx
                     </p>
                 </Dragger>
                 <Button type="primary" icon={<UploadOutlined />} block>

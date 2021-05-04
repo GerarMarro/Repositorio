@@ -199,6 +199,7 @@ class Perfil extends React.Component {
                 this.actualizarMain();
             }).catch(err =>{
                 message.error({ content: 'Algo salió mal', key, duration: 2 });
+                console.error(err);
             })
         }
         

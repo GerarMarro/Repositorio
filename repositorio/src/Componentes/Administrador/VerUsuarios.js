@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Input, Button, message, Breadcrumb, Card, Modal, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { GetUserAdmin, DelUser } from '../../Datos/requests';
 import UserInfo from './InformacionUser';
 
@@ -53,13 +53,13 @@ class VerUsuarios extends React.Component {
             <Button
               type="primary"
               onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-              icon="search"
+              icon={<SearchOutlined /> }
               size="small"
               style={{ width: 90, marginRight: 8 }}
             >
               Buscar
             </Button>
-            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            <Button onClick={() => this.handleReset(clearFilters)} icon={<ReloadOutlined /> } size="small" style={{ width: 90 }}>
               Reiniciar
             </Button>
           </div>
@@ -120,16 +120,23 @@ class VerUsuarios extends React.Component {
       };
     
       showConfirm = (event) => {
-        var usuario = JSON.parse(event.target.name), nombre = usuario.nombre, id = usuario._id;
+        var usuario = JSON.parse(event.target.name), nombre = usuario.nombre, id = usuario._id, admin=this.props.id;
+        console.log(admin);
         //  var elim = false;
         confirm({
           title: '¿Está seguro que desea eliminar a '+nombre+'?',
           content: 'Si elimina este usuario no podrá recuperarse ya que se eliminará completamente de la base de datos',
           onOk() {
             message.loading({ content: 'Esperamos que sepas lo que haces...', key });
-            DelUser(id)
+            DelUser(id, admin)
             .then(res => { 
               setTimeout( message.success({ content: 'Usuarios eliminado correctamente!', key }), 2000000);
+              var sesion ={
+                header: "Ver usuarios",
+                action: "VerUsuarios",
+                menu: '3.1'
+            }
+            localStorage.setItem('state', JSON.stringify(sesion));
               window.location.reload();
             })
             .catch(error =>{
@@ -174,9 +181,9 @@ class VerUsuarios extends React.Component {
             render: (record) => (
               <span>
                 <span>
-                  <a href="#" onClick={this.handleModal} name={JSON.stringify(record)}>Ver a {record.nombre}</a>
+                  <a href={'#'}  onClick={this.handleModal} style={{color:"#07C5FF"}} name={JSON.stringify(record)}>Ver a {record.nombre}</a>
                   <Divider type="vertical" />
-                  <a href="#" onClick={this.showConfirm} name={JSON.stringify(record)}>Eliminar</a>
+                  <a href={'#'} onClick={this.showConfirm} style={{color:"#DF2605"}} name={JSON.stringify(record)}>Eliminar</a>
                 </span>
               </span>
             )
@@ -185,7 +192,7 @@ class VerUsuarios extends React.Component {
         return (
           <>
             <Card title={this.bread}  style={{ width: "90%" }}>
-              <Table columns={columns} dataSource={this.state.usuarios} pagination={{ pageSize: 10 }} style={{width:"100%"}} />;
+              <Table columns={columns} dataSource={this.state.usuarios} pagination={{ pageSize: 5 }} style={{width:"100%"}} />;
             </Card>
             <Modal
               title="Ver usuario"

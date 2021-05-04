@@ -1,5 +1,9 @@
 import axios from 'axios';
-import {registrar, getPregunta, updPass, authUser, upduser, getuser, reguser, getuseradmin, deluser} from './rutas';
+import {registrar, getPregunta, 
+        updPass, authUser, 
+        upduser, getuser, 
+        reguser, getuseradmin, 
+        deluser, getnotificaciones} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -92,9 +96,17 @@ function GetUserAdmin(id) {
     });
 }
 
-function DelUser(id) {
+function DelUser(id, admin) {
     
-    return axios.delete(deluser + id);
+    return axios.delete(deluser + id, {
+        data:{
+            admin: admin
+        }
+    });
+}
+
+function GetNotificaciones(id) {
+    return axios.get(getnotificaciones+id);
 }
 
 export {
@@ -106,5 +118,6 @@ export {
     GetUser, 
     RegUser,
     GetUserAdmin,
-    DelUser
+    DelUser,
+    GetNotificaciones
 };

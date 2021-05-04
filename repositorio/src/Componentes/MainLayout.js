@@ -17,7 +17,7 @@ import CrearUsuarios from './Administrador/CrearUsuarios';
 import Controller from './Administrador/ControllerDepartments';
 import Perfil from './Perfil';
 import Notificaciones from '../Notificaciones';
-import {GetUser} from '../Datos/requests';
+import {GetUser, GetNotificaciones} from '../Datos/requests';
 import {coloresRandom} from './Funciones';
 
 const { Header, Sider, Content } = Layout;
@@ -42,6 +42,11 @@ class MainLayout extends React.Component {
         this.Logueado(res.data);
       }).catch(err =>{
         console.log(err);
+      });
+      GetNotificaciones(oldId).then(res =>{
+        this.setState({notificaciones:res.data});
+      }).catch(err=>{
+        console.error(err);
       })
     }else{
       message.success({ content: 'Ninguna sesión encontrada', key });
@@ -56,7 +61,8 @@ class MainLayout extends React.Component {
     usuario: null,
     departamento: null,
     color: "",
-    menu: '1'
+    menu: '1',
+    notificaciones: []
   };
 
   toggle = () => {
@@ -66,18 +72,33 @@ class MainLayout extends React.Component {
   };
 
   Logueado = (usuarioL) =>{
-    
+    var oldSession = JSON.parse(localStorage.getItem('state'));
+
     if (String(usuarioL.usuario).indexOf("@") <= 0) {
-      this.setState({
-        session : 1,
-        usuario: usuarioL,
-        header: "Bienvenido", 
-        action: "Bienvenido", 
-        menu: ''
-      }, ()=>{
-        localStorage.setItem("usuario", this.state.usuario.usuario);
-        localStorage.setItem("id", this.state.usuario._id);
-      });  
+      if (oldSession === null) {
+        this.setState({
+          session : 1,
+          usuario: usuarioL,
+          header: "Bienvenido", 
+          action: "Bienvenido", 
+          menu: ''
+        }, ()=>{
+          localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("id", this.state.usuario._id);
+        });  
+      }else{
+        this.setState({
+          session : 1,
+          usuario: usuarioL,
+          header: oldSession.header, 
+          action: oldSession.action, 
+          menu: oldSession.menu
+        }, ()=>{
+          localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("id", this.state.usuario._id);
+        });  
+      }
+      
     }
     
     return ;
@@ -227,13 +248,13 @@ class MainLayout extends React.Component {
     }else if (this.state.session === 1) {
       
       return (
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['']}>
+        <Menu theme="dark" mode="inline" selectedKeys={[this.state.menu]}>
           
-          <Menu.Item key="M1" icon={<DashboardOutlined />} onClick={() => this.setState({ action: "Dashboard", header: "Dashboard" })}>Dashboard</Menu.Item>
+          <Menu.Item key="1" icon={<DashboardOutlined />} onClick={() => this.setState({ action: "Dashboard", header: "Dashboard", menu:'1' })}>Dashboard</Menu.Item>
           
           {this.state.usuario.empresas.map((e, index) =>
               <SubMenu
-                key={"emp" + index}
+                key={"2." + index}
                 title={
                   <>
                     <BankOutlined />
@@ -243,10 +264,10 @@ class MainLayout extends React.Component {
                   </>
                 }
               >
-                {e.departamentos.map((d, index)=>
-                  <Menu.Item key={"Dep" + index} 
+                {e.departamentos.map((d, indexD)=>
+                  <Menu.Item key={"2." + index +"."+ indexD} 
                   icon={d.tipo === 0 ?  <ReadOutlined /> : <UploadOutlined />}
-                  onClick={() => this.setState({ action: "Departamento", header: "Departamentos", departamento: d })}
+                  onClick={() => this.setState({ action: "Departamento", header: "Departamentos", departamento: d, menu: '2.'+index+"."+indexD})}
                   >
                     {d.nombre}
                   
@@ -256,7 +277,7 @@ class MainLayout extends React.Component {
               </SubMenu>
           )}
           <SubMenu
-              key="us12"
+              key="3"
               
               title={
                 <>
@@ -269,28 +290,28 @@ class MainLayout extends React.Component {
                 </>
               }
             >
-              <Menu.Item key="M12" 
+              <Menu.Item key="3.1" 
               icon={
                 <ContactsOutlined />}
-                onClick={() => this.setState({ action: "VerUsuarios", header: "Ver usuarios" })}
+                onClick={() => this.setState({ action: "VerUsuarios", header: "Ver usuarios", menu:'3.1' })}
               >
                   Ver usuarios
                 </Menu.Item>
 
-              <Menu.Item key="M13"
+              <Menu.Item key="3.2"
                 icon={
                   <UserAddOutlined />
                 }
-                onClick={() => this.setState({ action: "CrearUsuarios", header: "Crear usuarios" })}  
+                onClick={() => this.setState({ action: "CrearUsuarios", header: "Crear usuarios", menu:'3.2' })}  
               >
                   Crear usuario
                 </Menu.Item>
 
             </SubMenu>
-          <Menu.Item key="M2" icon={<UserOutlined />} onClick={() => this.setState({ action: "Perfil", header: "Perfil" })}>
+          <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.setState({ action: "Perfil", header: "Perfil", menu:'4'})}>
             Perfil
           </Menu.Item>
-          <Menu.Item key="M3" icon={<LogoutOutlined />} onClick={() => this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' })}>
+          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' })}>
             Cerrar sesión
           </Menu.Item>
         </Menu>
@@ -298,7 +319,7 @@ class MainLayout extends React.Component {
       )
     }else if (this.state.session === 2) {
       return (
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.state.menu]}>
           
           <Menu.Item key="1">Dashboard</Menu.Item>
           <SubMenu
@@ -364,8 +385,8 @@ class MainLayout extends React.Component {
         <>
           <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"8%", display:"inline"}}>
             <div style={{textAlign:"right", marginRight:20}}>
-              <Popover key="pop2" placement="bottomRight" title={"Ver Notificaciones"} content={<Notificaciones />} trigger="click">
-                <Badge count={0} overflowCount={10}>
+              <Popover key="pop2" overlayStyle={{width:"35%"}} placement="bottomRight" title={"Ver Notificaciones"} content={<Notificaciones notificaciones={this.state.notificaciones} />} trigger="click">
+                <Badge count={this.state.notificaciones.length} overflowCount={10}>
                   <Text style={{color:"white", fontSize:15, marginRight:10, cursor:"pointer" }}>{this.state.usuario.usuario}</Text><this.popoverAvatar />
                 </Badge>
               </Popover> 

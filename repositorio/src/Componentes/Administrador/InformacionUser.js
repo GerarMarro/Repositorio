@@ -12,7 +12,7 @@ class UserInfo extends React.Component {
             <>
             
                 <div style={{width:"100%", textAlign:"center"}}>
-                    { this.usuario.foto === null ? 
+                    { this.usuario.foto === 0 ? 
                         <Avatar style={{ backgroundColor: coloresRandom(), verticalAlign: 'middle' }} size={190}>
                             <Text style={{color:"white", fontSize:100  }} size={200}>{this.usuario.nombre.substr(0, 1) + this.usuario.apellido.substr(0, 1)}</Text> 
                         </Avatar> :

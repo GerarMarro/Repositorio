@@ -136,6 +136,13 @@ class CrearUsuarios extends React.Component {
             RegUser(Usuario).then(res =>{
                 message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
                 console.log("res", res.data);
+                var sesion ={
+                    header: "Crear usuarios",
+                    action: "CrearUsuarios",
+                    menu: '3.2'
+                }
+                localStorage.setItem('state', JSON.stringify(sesion));
+                window.location.reload();
             }).catch(err =>{
                 message.error({ content: 'Algo salió mal', key });
                 console.error("Error: ", err)
