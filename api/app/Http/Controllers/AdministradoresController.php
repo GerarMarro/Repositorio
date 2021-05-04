@@ -10,6 +10,7 @@ use App\Models\Usuaios;
 use App\Models\Departamentos;
 use App\Mail\RestauracionContraseña; 
 use App\Models\Logs; 
+use App\Models\Datos; 
 
 class AdministradoresController extends Controller
 {
@@ -322,6 +323,28 @@ class AdministradoresController extends Controller
         }
         
         return json_encode($logs);
+    }
+
+    public function SubirArchivo(Request $request){
+        $datos = Datos::create([
+            'titulo' => $request->titulo,
+            'descripcion' => $request->descripcion, 
+            'usuario' => $request->usuario, 
+            'departamento' => $request->departamento, 
+            'empresa' => $request->empresa, 
+            'admin' => $request->admin,
+            'datos' => $request->datos,
+            'tipo' => $request->tipo
+        ]);
+
+        Logs::create([
+            'usuario' => $request->usuario,
+            'admin' => $request->admin,
+            'titulo' => "Se ha subido un archivo!",
+            'descripcion' => "Buenas noticias! se ha subido el archivo ". $request->titulo." ya puedes revisarlo."
+        ]);
+
+        return json_encode($datos);
     }
 }
 

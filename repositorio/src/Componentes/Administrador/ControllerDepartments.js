@@ -10,7 +10,7 @@ class Controller extends React.Component {
         if (this.props.departamento.tipo === 0) {
             return <Lectura />
         }else {
-            return < Escritura />
+            return < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.empresa} />
         }
     } 
 

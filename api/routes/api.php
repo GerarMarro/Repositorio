@@ -27,3 +27,4 @@ Route::post('reguser', 'App\Http\Controllers\UsuariosController@Registrar');
 Route::get('getuseradmin', 'App\Http\Controllers\AdministradoresController@GetUsersxAdmin');
 Route::delete('deluser/{id}', 'App\Http\Controllers\UsuariosController@EliminarUser');
 Route::get('getnotificaciones/{id}', 'App\Http\Controllers\AdministradoresController@GetNotificaciones');
+Route::post('subirarchivo', 'App\Http\Controllers\AdministradoresController@SubirArchivo');

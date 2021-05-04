@@ -62,6 +62,7 @@ class MainLayout extends React.Component {
     departamento: null,
     color: "",
     menu: '1',
+    empresa: "",
     notificaciones: []
   };
 
@@ -179,7 +180,7 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
-                <Controller departamento={this.state.departamento} />
+                <Controller departamento={this.state.departamento} usuario={this.state.usuario} empresa={this.state.empresa} />
                 
               </Content>
           </>
@@ -263,6 +264,7 @@ class MainLayout extends React.Component {
                     </span>
                   </>
                 }
+                onTitleClick={() => this.setState({ empresa: e.nombre})}
               >
                 {e.departamentos.map((d, indexD)=>
                   <Menu.Item key={"2." + index +"."+ indexD} 

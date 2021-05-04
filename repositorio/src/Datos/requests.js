@@ -3,7 +3,8 @@ import {registrar, getPregunta,
         updPass, authUser, 
         upduser, getuser, 
         reguser, getuseradmin, 
-        deluser, getnotificaciones} from './rutas';
+        deluser, getnotificaciones,
+        subirarchivo} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -109,6 +110,20 @@ function GetNotificaciones(id) {
     return axios.get(getnotificaciones+id);
 }
 
+function GuardarDatos(datos) {
+    return axios.post(subirarchivo, {
+        titulo: datos.titulo,
+        descripcion: datos.descripcion,
+        tipo: datos.tipo,
+        empresa: datos.empresa,
+        departamento: datos.departamento,
+        admin: datos.admin,
+        usuario: datos.usuario,
+        datos: datos.datos,
+
+    })
+}
+
 export {
     Registrar, 
     GetPregunta, 
@@ -119,5 +134,6 @@ export {
     RegUser,
     GetUserAdmin,
     DelUser,
-    GetNotificaciones
+    GetNotificaciones,
+    GuardarDatos
 };

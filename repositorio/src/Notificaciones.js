@@ -1,6 +1,5 @@
 import React from 'react';
-import { List, Avatar, Empty, Typography, message, Spin } from 'antd';
-import InfiniteScroll from 'react-infinite-scroller';
+import { List, Avatar, Empty, Typography, Spin } from 'antd';
 import {coloresRandom} from './Componentes/Funciones';
 
 const { Text } = Typography;
@@ -17,7 +16,7 @@ class Notificaciones extends React.Component {
         this.setState({
             data: this.props.notificaciones.reverse()
         }, ()=>{
-            console.log(this.state.data)
+            //console.log(this.state.data)
         });
     }
 
@@ -34,7 +33,7 @@ class Notificaciones extends React.Component {
         if (this.state.data !== null && this.state.data !== undefined) {
             return(
                 <>
-                    <div className="demo-infinite-container" style={{width:"100%", height:"300px"}}>
+                    <div className="demo-infinite-container" style={{width:"100%", height:"350px"}}>
                     
                         <List
                             dataSource={this.state.data}
