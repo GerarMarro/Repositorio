@@ -367,5 +367,9 @@ class AdministradoresController extends Controller
         }
         return json_encode($datos);
     }
+
+    public function Prueba(){
+        return "Prueba";
+    }
 }
 
