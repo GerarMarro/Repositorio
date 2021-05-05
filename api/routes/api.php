@@ -28,3 +28,5 @@ Route::get('getuseradmin', 'App\Http\Controllers\AdministradoresController@GetUs
 Route::delete('deluser/{id}', 'App\Http\Controllers\UsuariosController@EliminarUser');
 Route::get('getnotificaciones/{id}', 'App\Http\Controllers\AdministradoresController@GetNotificaciones');
 Route::post('subirarchivo', 'App\Http\Controllers\AdministradoresController@SubirArchivo');
+Route::get('leerarchivo/{id}', 'App\Http\Controllers\AdministradoresController@LeerArchivo');
+Route::get('todosdepartamentos/{id}', 'App\Http\Controllers\AdministradoresController@todosDepartamentos');

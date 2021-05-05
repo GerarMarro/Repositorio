@@ -8,9 +8,9 @@ class Controller extends React.Component {
     components = () =>{
         console.clear();
         if (this.props.departamento.tipo === 0) {
-            return <Lectura />
+            return <Lectura departamento={this.props.departamento} empresa={this.props.empresa} />
         }else {
-            return < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.empresa} />
+            return < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.empresa.nombre} />
         }
     } 
 

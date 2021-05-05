@@ -1,133 +1,148 @@
 import React from 'react';
-import { Table, Input, Button } from 'antd';
-import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
+import { leerArchivo, todosDepartamentos } from '../../Datos/requests';
+import { Card, Select, Space, Button, Breadcrumb, List, Descriptions, Modal } from 'antd';
+import { SearchOutlined } from '@ant-design/icons'
+import VerDatos from './verDatos';
 
-const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Joe Black',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Jim Green',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-    {
-      key: '4',
-      name: 'Jim Red',
-      age: 32,
-      address: 'London No. 2 Lake Park',
-    },
-];
+const { Option } = Select;
 
 class Lectura extends React.Component {
     
-    state = {
-        searchText: '',
-        searchedColumn: '',
-    };
-    getColumnSearchProps = dataIndex => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-          <div style={{ padding: 8 }}>
-            <Input
-              ref={node => {
-                this.searchInput = node;
-              }}
-              key="s"
-              placeholder={`Search ${dataIndex}`}
-              value={selectedKeys[0]}
-              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-              style={{ width: 188, marginBottom: 8, display: 'block' }}
-            />
-            <Button
-              type="primary"
-              onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-              icon="search"
-              size="small"
-              style={{ width: 90, marginRight: 8 }}
-            >
-              Search
-            </Button>
-            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-              Reset
-            </Button>
-          </div>
-        ),
-        filterIcon: filtered => (
-          <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-        ),
-        onFilter: (value, record) =>
-          record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase()),
-        onFilterDropdownVisibleChange: visible => {
-          if (visible) {
-            setTimeout(() => this.searchInput.select());
-          }
-        },
-        render: text =>
-          this.state.searchedColumn === dataIndex ? (
-            <Highlighter
-              highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-              searchWords={[this.state.searchText]}
-              autoEscape
-              textToHighlight={text.toString()}
-            />
-          ) : (
-            text
-          ),
-      });
+  state = {
+    departamentos: [],
+    departamentoesc: "",
+    datos: [],
+    archivo: [],
+    visible: false,
+    verdata: ""
+  };
+
+  componentDidMount(){ 
+    todosDepartamentos(this.props.empresa._id)
+    .then(res =>{
+      this.setState({
+        departamentos: res.data
+      }, ()=>{
+        //console.log(this.state.departamentos);
+      })
+    })    
+  }
+  
+  onChange = (value) => {
+    this.setState({departamentoesc: value}, ()=>{});
+  }
+
+  buscarDatos = () =>{
+    leerArchivo(this.state.departamentoesc)
+    .then(res =>{
+      this.setState({
+        datos: res.data
+      }, ()=>{
+        //console.log(this.state.datos)
+      })
+    })
+  }
+
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
+  
+  showModal = (e) => {
     
-      handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        this.setState({
-          searchText: selectedKeys[0],
-          searchedColumn: dataIndex,
-        });
-      };
-    
-      handleReset = clearFilters => {
-        clearFilters();
-        this.setState({ searchText: '' });
-      };
-    
-      render() {
-        const columns = [
-          {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            width: '30%',
-            ...this.getColumnSearchProps('name'),
-          },
-          {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
-            width: '20%',
-            ...this.getColumnSearchProps('age'),
-          },
-          {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            ...this.getColumnSearchProps('address'),
-          },
-        ];
-        return <Table columns={columns} dataSource={data} style={{width:"90%"}} />;
-      }
+    this.setState({
+      verdata: JSON.parse(e.target.name),
+      visible: true
+    }, ()=>{/*console.log(this.state.verdata)*/});
+  };
+
+
+
+  bread = 
+  ( 
+      <Breadcrumb>
+          <Breadcrumb.Item>{this.props.empresa.nombre}</Breadcrumb.Item>
+          <Breadcrumb.Item>{this.props.departamento.nombre}</Breadcrumb.Item>
+      </Breadcrumb>
+  )
+  render(){
+    return (
+      <>
+        <Card title={this.bread} style={{ width: "90%" }}>
+          <Space direction="vertical" style={{width:"100%"}}>
+            <div style={{display:"flex"}}>
+              <Select
+                showSearch
+                style={{ width: "100%" }}
+                placeholder="Sleccione un departamento"
+                optionFilterProp="children"
+                onChange={this.onChange}
+                filterOption={(input, option) =>
+                  option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {this.state.departamentos.map((d, index)=>
+                    <Option key={index} value={d._id}>{d.nombre}</Option>
+                  )
+                }
+              </Select>
+              <Button type="primary" onClick={this.buscarDatos} icon={<SearchOutlined />} />
+            </div>
+            <Card style={{ width: "100%" }}>
+              <List
+                size="large"          
+                bordered
+                pagination={{
+                  onChange: page => {
+                    console.log(page);
+                  },
+                  pageSize: 1,
+                }}
+                dataSource={this.state.datos}
+                renderItem={item => 
+                  <List.Item>
+                  <List.Item.Meta
+                    title={<a href={'#'} onClick={this.showModal} style={{color:"#0049B6"}} name={item.datos}>{item.titulo}</a>}
+                    description={
+                    <>
+                      <Space direction="vertical" style={{width:"100%"}}>
+                        <Descriptions bordered>
+                          <Descriptions.Item label="Tipo">{ item.tipo === "csv" ? "CSV" : "Excel"}</Descriptions.Item>
+                          <Descriptions.Item label="Creado por">{ item.usuarioprop ? item.administrador.nombre : item.usuarioprop.nombre }</Descriptions.Item>
+                          <Descriptions.Item label="Subido en">{new Date(item.created_at).toLocaleDateString()}</Descriptions.Item>
+                          <Descriptions.Item label="En">{ new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Descriptions.Item>
+                          <Descriptions.Item label="Descripción">{ item.descripcion}</Descriptions.Item>
+                        </Descriptions>
+                      </Space>
+                    </>}
+                  />
+                </List.Item>
+            }
+              />
+            </Card>
+
+          </Space>
+        </Card>
+        <Modal
+          title="Basic Modal"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <VerDatos data={this.state.verdata} />
+        </Modal>
+      </>
+    )
+  }
 }
 
 export default Lectura;

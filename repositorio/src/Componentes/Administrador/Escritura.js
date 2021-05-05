@@ -119,12 +119,7 @@ class Escritura extends React.Component {
     GuardarDatos(data)
     .then(res => {
       message.success("Sus datos ya estan en nuestra base de datos.");
-      var sesion ={
-        header: "Crear usuarios",
-        action: "CrearUsuarios",
-        menu: '2.',
-        departamento: this.props.departamento
-    }
+      
     localStorage.removeItem('state');
     window.location.reload();
     }).catch(err =>{
@@ -159,7 +154,7 @@ class Escritura extends React.Component {
             <TextArea
               name="descripcion"
               onChange={this.handleInputs}
-              placeholder="Controlled autosize"
+              placeholder="Descripción"
             />
             <FileInput 
               style={{width:"100%"}}

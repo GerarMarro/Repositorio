@@ -264,7 +264,7 @@ class MainLayout extends React.Component {
                     </span>
                   </>
                 }
-                onTitleClick={() => this.setState({ empresa: e.nombre})}
+                onTitleClick={() => this.setState({ empresa: e})}
               >
                 {e.departamentos.map((d, indexD)=>
                   <Menu.Item key={"2." + index +"."+ indexD} 
@@ -313,7 +313,10 @@ class MainLayout extends React.Component {
           <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.setState({ action: "Perfil", header: "Perfil", menu:'4'})}>
             Perfil
           </Menu.Item>
-          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' })}>
+          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() =>{ 
+            this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' });
+            localStorage.clear();
+            }}>
             Cerrar sesión
           </Menu.Item>
         </Menu>
@@ -388,7 +391,7 @@ class MainLayout extends React.Component {
           <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"8%", display:"inline"}}>
             <div style={{textAlign:"right", marginRight:20}}>
               <Popover key="pop2" overlayStyle={{width:"35%"}} placement="bottomRight" title={"Ver Notificaciones"} content={<Notificaciones notificaciones={this.state.notificaciones} />} trigger="click">
-                <Badge count={this.state.notificaciones.length} overflowCount={10}>
+                <Badge count={this.state.notificaciones.length} overflowCount={99}>
                   <Text style={{color:"white", fontSize:15, marginRight:10, cursor:"pointer" }}>{this.state.usuario.usuario}</Text><this.popoverAvatar />
                 </Badge>
               </Popover> 

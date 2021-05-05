@@ -10,6 +10,8 @@ var getuseradmin = ApiRoot + "getuseradmin";
 var deluser = ApiRoot + "deluser/";
 var getnotificaciones = ApiRoot + "getnotificaciones/";
 var subirarchivo = ApiRoot + "subirarchivo";
+var leerarchivo = ApiRoot + "leerarchivo/";
+var todosdepartamentos = ApiRoot + "todosdepartamentos/";
 
 export default ApiRoot;
 export {
@@ -23,5 +25,7 @@ export {
     getuseradmin,
     deluser,
     getnotificaciones,
-    subirarchivo
+    subirarchivo,
+    leerarchivo,
+    todosdepartamentos
 };

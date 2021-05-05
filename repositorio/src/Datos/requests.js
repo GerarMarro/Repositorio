@@ -4,7 +4,8 @@ import {registrar, getPregunta,
         upduser, getuser, 
         reguser, getuseradmin, 
         deluser, getnotificaciones,
-        subirarchivo} from './rutas';
+        subirarchivo, leerarchivo,
+        todosdepartamentos} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -38,6 +39,7 @@ function ActualizarContra(datos, hora) {
         contraseña: hora
     })
 }
+
 function Ingresar(user, contraseña) {
     return axios.get(authUser, {
             params:{
@@ -124,6 +126,13 @@ function GuardarDatos(datos) {
     })
 }
 
+function leerArchivo(departamento) {
+    return axios.get(leerarchivo + departamento);
+}
+
+function todosDepartamentos(empresa) {
+    return axios.get(todosdepartamentos + empresa);
+}
 export {
     Registrar, 
     GetPregunta, 
@@ -135,5 +144,7 @@ export {
     GetUserAdmin,
     DelUser,
     GetNotificaciones,
-    GuardarDatos
+    GuardarDatos,
+    leerArchivo,
+    todosDepartamentos
 };

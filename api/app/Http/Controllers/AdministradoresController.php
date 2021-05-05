@@ -346,5 +346,26 @@ class AdministradoresController extends Controller
 
         return json_encode($datos);
     }
+
+    public function todosDepartamentos($id){
+        $departamentos = Departamentos::where([
+            'propietario' => $id,
+            'tipo' => 1
+        ])->get();
+        
+        return json_encode($departamentos);
+    }
+
+    public function LeerArchivo($id){
+        $datos = Datos::where('departamento', '=', $id)->get();
+        
+        foreach ($datos as $d) {
+            $d->dptoProp;
+            $d->empresaprop;
+            $d->administrador;
+            $d->usuarioprop;
+        }
+        return json_encode($datos);
+    }
 }
 
