@@ -14,7 +14,8 @@ class Lectura extends React.Component {
     datos: [],
     archivo: [],
     visible: false,
-    verdata: ""
+    verdata: "",
+    titulo: ""
   };
 
   componentDidMount(){ 
@@ -36,7 +37,7 @@ class Lectura extends React.Component {
     leerArchivo(this.state.departamentoesc)
     .then(res =>{
       this.setState({
-        datos: res.data
+        datos: res.data.reverse()
       }, ()=>{
         //console.log(this.state.datos)
       })
@@ -61,7 +62,8 @@ class Lectura extends React.Component {
     
     this.setState({
       verdata: JSON.parse(e.target.name),
-      visible: true
+      visible: true,
+      titulo: e.target.id
     }, ()=>{/*console.log(this.state.verdata)*/});
   };
 
@@ -111,7 +113,7 @@ class Lectura extends React.Component {
                 renderItem={item => 
                   <List.Item>
                   <List.Item.Meta
-                    title={<a href={'#'} onClick={this.showModal} style={{color:"#0049B6"}} name={item.datos}>{item.titulo}</a>}
+                    title={<a href={'#'} onClick={this.showModal} style={{color:"#0049B6"}} id={item.titulo} name={item.datos}>{item.titulo}</a>}
                     description={
                     <>
                       <Space direction="vertical" style={{width:"100%"}}>
@@ -133,10 +135,11 @@ class Lectura extends React.Component {
           </Space>
         </Card>
         <Modal
-          title="Basic Modal"
+          title={this.state.titulo}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          width={"90%"}
         >
           <VerDatos data={this.state.verdata} />
         </Modal>
