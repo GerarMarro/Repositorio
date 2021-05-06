@@ -168,7 +168,7 @@ class MainLayout extends React.Component {
             <Content
                 className="App"
               >
-                <Dashboard />
+                <Dashboard notificaciones={this.state.notificaciones} />
                 
               </Content>
           </>
@@ -377,7 +377,7 @@ class MainLayout extends React.Component {
     if (this.state.usuario === null) {
       return (
         <>
-          <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"8%", display:"inline"}}>
+          <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"65px", display:"inline"}}>
             
             <Text style={{color:"white", fontSize:22}}>{this.state.header}</Text>
         
@@ -388,9 +388,9 @@ class MainLayout extends React.Component {
       
       return (
         <>
-          <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"8%", display:"inline"}}>
+          <Header className="site-layout-background"  style={{ padding: 0, color:"white", height:"65px", display:"inline"}}>
             <div style={{textAlign:"right", marginRight:20}}>
-              <Popover key="pop2" overlayStyle={{width:"35%"}} placement="bottomRight" title={"Ver Notificaciones"} content={<Notificaciones notificaciones={this.state.notificaciones} />} trigger="click">
+              <Popover key="pop2" overlayStyle={{width:"500px"}} placement="bottomRight" title={"Ver Notificaciones"} content={<Notificaciones notificaciones={this.state.notificaciones} />} trigger="click">
                 <Badge count={this.state.notificaciones.length} overflowCount={99}>
                   <Text style={{color:"white", fontSize:15, marginRight:10, cursor:"pointer" }}>{this.state.usuario.usuario}</Text><this.popoverAvatar />
                 </Badge>
@@ -416,7 +416,7 @@ class MainLayout extends React.Component {
           <this.MenusDispo />
 
         </Sider>
-        <Layout className="site-layout">
+        <Layout className="main">
           <this.HeaderPage />
           <this.controllerContentInicio />
         </Layout>

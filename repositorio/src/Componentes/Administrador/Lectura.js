@@ -3,6 +3,7 @@ import { leerArchivo, todosDepartamentos } from '../../Datos/requests';
 import { Card, Select, Space, Button, Breadcrumb, List, Descriptions, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 import VerDatos from './verDatos';
+import '../../../src/App.css';
 
 const { Option } = Select;
 
@@ -121,7 +122,7 @@ class Lectura extends React.Component {
                           <Descriptions.Item label="Tipo">{ item.tipo === "csv" ? "CSV" : "Excel"}</Descriptions.Item>
                           <Descriptions.Item label="Creado por">{ item.usuarioprop ? item.administrador.nombre : item.usuarioprop.nombre }</Descriptions.Item>
                           <Descriptions.Item label="Subido en">{new Date(item.created_at).toLocaleDateString()}</Descriptions.Item>
-                          <Descriptions.Item label="En">{ new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Descriptions.Item>
+                          <Descriptions.Item label="A las">{ new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Descriptions.Item>
                           <Descriptions.Item label="Descripción">{ item.descripcion}</Descriptions.Item>
                         </Descriptions>
                       </Space>
@@ -137,11 +138,15 @@ class Lectura extends React.Component {
         <Modal
           title={this.state.titulo}
           visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          destroyOnClose
+          footer={
+            <Button type="primary" onClick={this.handleOk}>OK</Button>
+          }
           width={"90%"}
         >
-          <VerDatos data={this.state.verdata} />
+          <div className="verdata">
+            <VerDatos data={this.state.verdata} />
+          </div>
         </Modal>
       </>
     )

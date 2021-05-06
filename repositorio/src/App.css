@@ -53,34 +53,103 @@
   overflow-y:scroll;
 }
 
+.org{
+  height:300px;
+  overflow-y:scroll;
+}
+
+.main{
+  height:100%;
+}
+.verdata{
+  height:450px;
+  overflow-y: scroll;
+}
+
+.verdata::-webkit-scrollbar{
+  width: 8px;
+  height: 8px;    /* Tamaño del scroll en horizontal */
+}
+
 .json::-webkit-scrollbar{
   width: 8px;
   height: 8px;    /* Tamaño del scroll en horizontal */
-  
 }
+
+.org::-webkit-scrollbar{
+  width: 8px;
+  height: 8px;    /* Tamaño del scroll en horizontal */
+}
+
+.verdata::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
 .json::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 4px;
 }
 
+.org::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
 /* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.verdata::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
 .json::-webkit-scrollbar-thumb:hover {
   background: #b3b3b3;
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
+.org::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
 /* Cambiamos el fondo cuando esté en active */
+.verdata::-webkit-scrollbar-thumb:active {
+  background-color: #999999;
+}
+
+
+
 .json::-webkit-scrollbar-thumb:active {
   background-color: #999999;
 }
+
+.org::-webkit-scrollbar-thumb:active {
+  background-color: #999999;
+}
+
 /* Ponemos un color de fondo y redondeamos las esquinas del track */
-.container::-webkit-scrollbar-track {
+/*.verdata::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}*/
+/*
+.org::-webkit-scrollbar-track {
   background: #e1e1e1;
   border-radius: 4px;
 }
-
+*/
 /* Cambiamos el fondo cuando esté en active o hover */
 .json::-webkit-scrollbar-track:hover,
 .json::-webkit-scrollbar-track:active {
+background: #d4d4d4;
+}
+
+.org::-webkit-scrollbar-track:hover,
+.org::-webkit-scrollbar-track:active {
+background: #d4d4d4;
+}
+
+.verdata::-webkit-scrollbar-track:hover,
+.verdata::-webkit-scrollbar-track:active {
 background: #d4d4d4;
 }

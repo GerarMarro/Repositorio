@@ -1,8 +1,9 @@
 import React from 'react';
-import { Typography, Table, Input, Button, Tabs, Card } from 'antd';
-import { SearchOutlined, TableOutlined, CodeOutlined } from '@ant-design/icons';
+import { Typography, Table, Input, Button, Tabs, Popover } from 'antd';
+import { SearchOutlined, TableOutlined, CodeOutlined, CopyOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import '../../../src/App.css';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const {Text} = Typography;
 const { TabPane } = Tabs;
@@ -11,6 +12,7 @@ class TablaDatos extends React.Component{
     state = {
         searchText: '',
         searchedColumn: '',
+        copied: false
     };
 
     getColumnSearchProps = dataIndex => ({
@@ -103,6 +105,7 @@ class TablaDatos extends React.Component{
             <>
                 <Tabs defaultActiveKey="1">
                     <TabPane
+                      
                         tab={
                             <span>
                             <TableOutlined />
@@ -110,7 +113,7 @@ class TablaDatos extends React.Component{
                             </span>
                         }
                         key="1"
-                        >
+                    >
                         <Table pagination={{ pageSize:3 }} columns={this.getColumnas(this.props.datos)} dataSource={this.props.datos} />
                     </TabPane>
                     <TabPane
@@ -123,9 +126,23 @@ class TablaDatos extends React.Component{
                         key="2"
                         >
                             <div style={{width:"100%", padding:"0, 1rem", marginLeft:"25%"}}>
+                              <div style={{textAlign:"center", marginRight:"30px"}}>
+                                <Popover content={<Text style={{color:"green"}}>Copiado!</Text>} visible={this.state.copied}>
+                                  <CopyToClipboard text={JSON.stringify(this.props.datos, null, 2)}
+                                    onCopy={() =>{ 
+                                        this.setState({copied: true})
+                                        setTimeout( ()=>{this.setState({copied:false})}, 2000)
+                                      }
+                                    }>
+                                    <Button icon={<CopyOutlined />} />
+                                  </CopyToClipboard>
+                                </Popover>
+                                
+                              </div>
                                 <pre className="json"> 
                                     { JSON.stringify(this.props.datos, null, 2) } 
                                 </pre>
+                                
                             </div>
                     </TabPane>
                     

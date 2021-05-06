@@ -36,6 +36,7 @@ class VerDatos extends React.Component {
                 <>
                     <Card style={{height:"100%"}}>
                         <Collapse style={{height:"100%", width:"100%"}} defaultActiveKey="0" expandIconPosition="right" onChange={this.callback}>
+                            
                             {this.props.data.map((h, index)=>
                                 <Panel key={index} header={h.hoja} extra={<FileOutlined />}>
                                     <TablaDatos datos={h.datos} />
