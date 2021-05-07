@@ -5,7 +5,9 @@ import {registrar, getPregunta,
         reguser, getuseradmin, 
         deluser, getnotificaciones,
         subirarchivo, leerarchivo,
-        todosdepartamentos} from './rutas';
+        todosdepartamentos, crearempresa,
+        empresasxadmin, creardepartamento,
+        organizacion, allusers } from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -133,6 +135,36 @@ function leerArchivo(departamento) {
 function todosDepartamentos(empresa) {
     return axios.get(todosdepartamentos + empresa);
 }
+
+function crearEmpresa(datos) {
+    return axios.post(crearempresa, {
+        empresa: datos.empresa,
+        lectura: datos.lectura,
+        escritura: datos.escritura,
+        admin: datos.admin
+    });
+}
+
+function empresasxAdmin(id){
+    return axios.get(empresasxadmin + id);
+}
+
+function crearDepartamento(datos) {
+    return axios.post(creardepartamento, {
+        nombre: datos.nombre,
+        empresa: datos.empresa,
+        admin: datos.admin
+    });
+}
+
+function Organizacion(id) {
+    return axios.get(organizacion + id);
+}
+
+function AllUsers(id) {
+    return axios.get(allusers+id);
+}
+
 export {
     Registrar, 
     GetPregunta, 
@@ -146,5 +178,10 @@ export {
     GetNotificaciones,
     GuardarDatos,
     leerArchivo,
-    todosDepartamentos
+    todosDepartamentos,
+    crearEmpresa,
+    empresasxAdmin,
+    crearDepartamento,
+    Organizacion,
+    AllUsers
 };

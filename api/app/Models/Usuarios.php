@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use App\Models\Administradores;
+use App\Models\Departamentos;
 
 class Usuarios extends Eloquent
 {
@@ -30,8 +31,8 @@ class Usuarios extends Eloquent
     public function administrador(){
         return $this->hasOne(Administradores::class, 'admin', '_id');
     }
-/*
+
     public function departamentos(){
-        return $this->hasMany(Empresas::class, 'departamento', '_id');
-    }*/
+        return $this->hasOne(Departamentos::class, '_id', 'departamento');
+    }
 }

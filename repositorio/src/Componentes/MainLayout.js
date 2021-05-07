@@ -41,13 +41,9 @@ class MainLayout extends React.Component {
       GetUser(oldId, old).then(res =>{
         this.Logueado(res.data);
       }).catch(err =>{
-        console.log(err);
+        console.log("Hola:", err);
       });
-      GetNotificaciones(oldId).then(res =>{
-        this.setState({notificaciones:res.data});
-      }).catch(err=>{
-        console.error(err);
-      })
+      
     }else{
       message.success({ content: 'Ninguna sesión encontrada', key });
     }
@@ -99,6 +95,11 @@ class MainLayout extends React.Component {
           localStorage.setItem("id", this.state.usuario._id);
         });  
       }
+      GetNotificaciones(this.state.usuario._id).then(res =>{
+        this.setState({notificaciones:res.data});
+      }).catch(err=>{
+        console.error(err);
+      })
       
     }
     
@@ -118,7 +119,7 @@ class MainLayout extends React.Component {
         return(
         <>
           <Content
-               className="App"
+              className="App"
             >
               <Login Logueado={this.Logueado} />
   
@@ -167,8 +168,9 @@ class MainLayout extends React.Component {
           <>
             <Content
                 className="App"
+                style={{height:"1460px"}}
               >
-                <Dashboard notificaciones={this.state.notificaciones} />
+                <Dashboard notificaciones={this.state.notificaciones} admin={this.state.usuario} />
                 
               </Content>
           </>

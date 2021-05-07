@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, message } from 'antd';
+import { empresasxAdmin, crearDepartamento } from '../../Datos/requests';
 
 const { Option } = Select;
 const layout = {
@@ -18,29 +19,48 @@ const validateMessages = {
 };
 
 class CrearDepartamentos extends React.Component {
+    
+    state={
+        empresas:[]
+    }
+
+    componentDidMount(){
+        empresasxAdmin(this.props.admin._id)
+        .then(res =>{
+            this.setState({
+                empresas: res.data
+            }, ()=>{
+                //console.log(this.state);
+            });
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+    }
+
     formRef = React.createRef();
-    onGenderChange = (value) => {
-        switch (value) {
-            case 'male':
-                this.formRef.current.setFieldsValue({
-                    note: 'Hi, man!',
-                });
-                return;
-
-            case 'female':
-                this.formRef.current.setFieldsValue({
-                    note: 'Hi, lady!',
-                });
-                return;
-
-            case 'other':
-                this.formRef.current.setFieldsValue({
-                    note: 'Hi there!',
-                });
-        }
-    };
+   
     onFinish = (values) => {
-        console.log(values);
+        message.loading("Creando departamento");
+        var datos ={
+            nombre: values.nombre,
+            empresa: values.empresa,
+            admin: localStorage.getItem('id')
+        }
+        crearDepartamento(datos)
+        .then(res =>{
+            message.success("Departamento creado");
+            var sesion ={
+                header: "Dashboard",
+                action: "Dashboard",
+                menu: '1'
+            }
+            localStorage.setItem('state', JSON.stringify(sesion));
+            window.location.reload();
+        })
+        .catch(err =>{
+            console.log(err);
+        })
     };
     onReset = () => {
         this.formRef.current.resetFields();
@@ -57,7 +77,7 @@ class CrearDepartamentos extends React.Component {
         return (
             <Form {...layout} ref={this.formRef} name="control-ref" onFinish={this.onFinish} validateMessages={validateMessages}>
                 <Form.Item
-                    name="departamento"
+                    name="empresa"
                     rules={[
                         {
                             required: true,
@@ -65,13 +85,15 @@ class CrearDepartamentos extends React.Component {
                     ]}
                 >
                     <Select
+                    
                         placeholder="Selecciona una organización"
                         onChange={this.onGenderChange}
                         allowClear
                     >
-                        <Option value="male">male</Option>
-                        <Option value="female">female</Option>
-                        <Option value="other">other</Option>
+                        { this.state.empresas.map((e, index)=>
+                            <Option key={index} value={e._id}>{e.nombre}</Option>
+
+                        )}
                     </Select>
                 </Form.Item>
 
@@ -79,14 +101,14 @@ class CrearDepartamentos extends React.Component {
                     name="tipo"
                     rules={[
                         {
-                            required: true,
+                            required: false,
                         },
                     ]}
                 >
                     <Select
                         disabled
                         placeholder="Selecciona tipo de departamento"
-                        onChange={this.onGenderChange}
+                        
                         allowClear
                         defaultValue="1"
                     >

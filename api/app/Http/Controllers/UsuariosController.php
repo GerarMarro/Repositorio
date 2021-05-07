@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuarios;
 use App\Models\Departamentos;
 use App\Models\Logs;
+use App\Models\Empresas;
 
 class UsuariosController extends Controller
 {
@@ -59,5 +60,18 @@ class UsuariosController extends Controller
         $usuario->delete();
         return json_encode($usuario);
     }
+
+    public function TodaOrganizacion($id){
+        $empresas = Empresas::where('propietario', '=', $id)->get();
+
+        foreach ($empresas as $e) {
+            $departamentos = $e->departamentos;
+            
+            foreach ($departamentos as $d) {
+                $d->usuarios;
+            }
+        }
+        return response(json_encode($empresas), 200);
+    }   
 
 }

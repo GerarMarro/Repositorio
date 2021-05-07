@@ -12,6 +12,11 @@ var getnotificaciones = ApiRoot + "getnotificaciones/";
 var subirarchivo = ApiRoot + "subirarchivo";
 var leerarchivo = ApiRoot + "leerarchivo/";
 var todosdepartamentos = ApiRoot + "todosdepartamentos/";
+var crearempresa = ApiRoot + "crearempresa";
+var empresasxadmin = ApiRoot + "empresasxadmin/";
+var creardepartamento = ApiRoot + "creardepartamento";
+var organizacion = ApiRoot + "organizacion/";
+var allusers = ApiRoot + "allusers/";
 
 export default ApiRoot;
 export {
@@ -27,5 +32,10 @@ export {
     getnotificaciones,
     subirarchivo,
     leerarchivo,
-    todosdepartamentos
+    todosdepartamentos,
+    crearempresa,
+    empresasxadmin,
+    creardepartamento,
+    organizacion,
+    allusers
 };

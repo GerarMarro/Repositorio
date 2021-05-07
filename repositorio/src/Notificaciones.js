@@ -50,7 +50,7 @@ class Notificaciones extends React.Component {
                                 avatar={
                                     item.usuario_registrado !== null ? this.controllerAvatar(item.usuario_registrado, item.usuario_registrado.nombre, item.usuario_registrado.apellido) : this.controllerAvatar(item.administrador, item.administrador.nombre, item.administrador.apellido)
                                 }
-                                title={<h4 style={{cursor:"default"}}>{item.titulo}</h4>}
+                                title={<Text style={{cursor:"default"}}>{item.titulo}</Text>}
                                 description={item.descripcion}
                                 />
                                 

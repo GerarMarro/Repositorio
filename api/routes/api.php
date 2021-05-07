@@ -30,3 +30,8 @@ Route::get('getnotificaciones/{id}', 'App\Http\Controllers\AdministradoresContro
 Route::post('subirarchivo', 'App\Http\Controllers\AdministradoresController@SubirArchivo');
 Route::get('leerarchivo/{id}', 'App\Http\Controllers\AdministradoresController@LeerArchivo');
 Route::get('todosdepartamentos/{id}', 'App\Http\Controllers\AdministradoresController@todosDepartamentos');
+Route::post('crearempresa', 'App\Http\Controllers\AdministradoresController@CrearEmpresa');
+Route::get('empresasxadmin/{id}', 'App\Http\Controllers\AdministradoresController@EmpresasxAdmin');
+Route::post('creardepartamento', 'App\Http\Controllers\AdministradoresController@CrearDepartamentos');
+Route::get('organizacion/{id}', 'App\Http\Controllers\UsuariosController@TodaOrganizacion');
+Route::get('allusers/{id}', 'App\Http\Controllers\AdministradoresController@AllUsers');

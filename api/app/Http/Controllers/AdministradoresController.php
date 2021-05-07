@@ -368,8 +368,75 @@ class AdministradoresController extends Controller
         return json_encode($datos);
     }
 
-    public function Prueba(){
-        return "Prueba";
+    public function CrearEmpresa(Request $request){
+
+        $empresa = Empresas::create([
+            'nombre' => $request->empresa,
+            'propietario' => $request->admin,
+        ]);
+        
+        $depLect = Departamentos::create([
+            'nombre' => $request->lectura, 
+            'tipo' => 0, 
+            'propietario' => $empresa->_id
+        ]);
+
+        $depEsc = Departamentos::create([
+            'nombre' => $request->escritura, 
+            'tipo' => 1,
+            'propietario' => $empresa->_id
+        ]);
+
+        Logs::create([
+            'usuario' => $request->admin,
+            'admin' => $request->admin,
+            'titulo' => "Creación de nueva organización",
+            'descripcion' => "Se ha creado la organización ".$empresa->nombre."."
+        ]);
+
+        return response("La empresa ".$empresa->nombre." fue creada con los departamentos ".$depLect->nombre." y ".$depEsc->nombre, 200);
+    }
+
+    public function EmpresasxAdmin($id){
+        $empresas = Empresas::where('propietario', '=', $id)->get();
+        return response(json_encode($empresas), 200);
+    }
+
+    public function CrearDepartamentos(Request $request){
+        $depEsc = Departamentos::create([
+            'nombre' => $request->nombre, 
+            'tipo' => 1,
+            'propietario' => $request->empresa
+        ]);
+
+        $empresa = Empresas::where('_id', '=', $request->empresa)->first()->nombre;
+        
+        Logs::create([
+            'usuario' => $request->admin,
+            'admin' => $request->admin,
+            'titulo' => "Creación de nuevo departamento",
+            'descripcion' => "Se ha creado el nuevo departamento ".$depEsc->nombre." para la empresa ".$empresa
+        ]);
+        return response($depEsc, 200);
+    }
+
+    public function AllUsers($id){
+        $admin = Administradores::where('_id', '=', $id)->first();
+        if ($admin == null) {
+            return response("No hay usuarios", 404);
+        }else{
+            $usuarios = $admin->usuarios;
+            $respuesta = [];
+            foreach ($usuarios as $u) {
+                $usuario = [
+                    'id' => $u->_id,
+                    'username' => $u->usuario,
+                    
+                ];
+                array_push($respuesta, $usuario);
+            }
+            return response($respuesta, 200);
+        }
     }
 }
 
