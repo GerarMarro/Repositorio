@@ -243,7 +243,8 @@ class Perfil extends React.Component {
                     <Space direction="vertical" style={{width:"70%", textAlign:"left"}}>
                         <Input required allowClear name="nombre" placeholder="Nombre" size="large" defaultValue={this.usuario.nombre} onChange={this.handleChangeText}  prefix={<UserOutlined />} />
                         <Input required allowClear name="apellido" placeholder="Apellido" size="large" defaultValue={this.usuario.apellido} onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                        <Input required allowClear name="usuario" placeholder="Usuario" size="large" defaultValue={this.usuario.usuario} onChange={this.handleChangeText} prefix={<UserOutlined />} />
+                        <Input required allowClear name="usuario" placeholder="Usuario" size="large" defaultValue={this.usuario.usuario} onChange={this.handleChangeText} prefix={<UserOutlined />}
+                        readOnly={this.props.sesion===2 ? true : false} />
                         <Input required allowClear name="email" placeholder="Correo electrónico" defaultValue={this.usuario.email} size="large" onChange={this.handleChangeText} prefix={<this.email />} />
                         <Button type="primary" icon={<LockOutlined />} onClick={this.showModal} block>
                             Cambiar aspectos de seguridad

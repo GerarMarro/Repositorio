@@ -37,8 +37,8 @@ class Dashboard extends React.Component {
     render(){
         return(
             <>
-                <div style={{  width:"100%", marginRight:"15px" }}>
-                    <Row gutter={16}>
+                <div style={{  width:"100%", marginRight:"15px" }} >
+                    <Row gutter={16} hidden={this.props.sesion === 2 ? true : false}>
                         <Col span={12} style={{height:"100%"}}>
                             <Card title="Crear Organización" style={{height:"100%"}} bordered={true}>
                                 <CrearOrganizacion />
@@ -52,13 +52,13 @@ class Dashboard extends React.Component {
                     </Row>
                     <br />
                     <Row gutter={16}>
-                        <Col span={12} style={{height:"460px"}}>
+                        <Col span={12} style={{height:"460px"}} hidden={this.props.sesion === 2 ? true : false}>
                             <Card title="Tus Organizaciones" style={{height:"100%"}} bordered={true}>
                                 <VerOrganizacion />
                             </Card>
                         </Col>
-                        <Col span={12} >
-                            <Card title="Últimos Movimientos" style={{height:"100%"}} bordered={true}>
+                        <Col span={this.props.sesion === 2 ? 24 : 12} >
+                            <Card title="Últimos Movimientos" style={ {height:"100%"}} bordered={true}>
                                 { this.props.notificaciones.length === 0 ? "En caso de no cargar, recargue la pagina": <Notificaciones notificaciones={this.props.notificaciones} />}
                                 
                             </Card>
@@ -75,13 +75,9 @@ class Dashboard extends React.Component {
                                     <Select
                                         showSearch
                                         style={{ width: 300 }}
-                                        placeholder="Selecciona el usuario para chatear"
+                                        placeholder="Selecciona el usuario para enviar correo"
                                         optionFilterProp="children"
                                         onChange={this.onChange}
-                                        //onChange={onChange}
-                                        //onFocus={onFocus}
-                                        //onBlur={onBlur}
-                                        //onSearch={onSearch}
                                         filterOption={(input, option) =>
                                         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }

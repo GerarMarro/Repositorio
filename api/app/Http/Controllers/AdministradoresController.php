@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Administradores;
 use App\Models\Empresas;
-use App\Models\Usuaios;
+use App\Models\Usuarios;
 use App\Models\Departamentos;
 use App\Mail\RestauracionContraseña; 
 use App\Models\Logs; 
@@ -125,7 +125,15 @@ class AdministradoresController extends Controller
         //Valida si el usuario pertenece a una empresa o es administrador
 
         if(str_contains($usuario, "@")){
-            return json_encode("Esta @");
+            
+            $usuario = Usuarios::where('usuario', '=', $usuario)->where('email', '=', $email)->first();
+
+            if ($usuario == null) {
+                return json_encode(1003);
+            }else{
+                return json_encode($usuario) ;
+            }
+
         }else{
             //Si es administrador retorna el administrador encontrado
 
@@ -150,7 +158,7 @@ class AdministradoresController extends Controller
         //Busca el usuario que posee el id enviado
 
         $usuario = Administradores::where('_id', '=', $request->id)->first();
-        
+    
         //Cambia la contraseña para poder enviar el correo
         $usuario->contraseña = $request->contraseña;
         
@@ -190,7 +198,36 @@ class AdministradoresController extends Controller
         //Valido si pertenece a una empresa o es admin
         if (str_contains($usuario, "@")) {
             
-            return json_encode("Esta @");
+            $usuario = Usuarios::where('usuario', '=', $usuario)->first();
+            if ($usuario == null) {
+                
+                return json_encode(1003);
+
+            }else{
+                $contraseña = md5($contraseña);
+                
+                //Si es igual procedo a añadir campos extras
+                if ($contraseña == $usuario->contraseña) {
+
+                    //Extraigo las empresas que pertenecen al usuario
+                    $empresas = $usuario->departamentos->empresa;
+                    $departamento = $usuario->departamentos;
+                    //A cada empresa le añado sus departamentos
+                    $empresas->departamentos = $empresas->departamentos;
+                    /*foreach ($empresas as $e) {
+                        $e->departamentos = $e->departamentos;
+                    }*/
+
+                    //Le añado las empresas con sus dptos al usuario 
+                    $usuario->empresas = $empresas;
+                    //Lo retorno
+                    return json_encode($usuario);
+
+                }else{
+
+                    return json_encode(1004);
+                }
+            }
 
         }else{
 
@@ -242,7 +279,26 @@ class AdministradoresController extends Controller
 
         if (str_contains($request->usuario, "@")) {
             
-            return json_encode("Tiene @");
+            $usuario = Usuarios::where('_id', '=', $request->_id)->first();
+            
+            $this->ActualizoSeguridad($usuario, $request);
+
+            $usuario->update([
+                'foto' => $request->foto,
+                'nombre' => $request->nombre,
+                'apellido' => $request->apellido,
+                'usuario' => $request->usuario,
+                'email' => $request->email,
+                'pregunta' => $request->pregunta,
+                'respuesta' => $request->respuesta,
+            ]);    
+            Logs::create([
+                'usuario' => $request->_id,
+                'admin' => $request->admin,
+                'titulo' => "Modificar usuario",
+                'descripcion' => "Se ha modificado a ".$usuario->nombre."."
+            ]);
+            return json_encode($usuario); 
 
         }else{
             $admin = Administradores::where('_id', '=', $request->_id)->first();
@@ -269,14 +325,16 @@ class AdministradoresController extends Controller
     }
 
     public function ActualizoSeguridad($user, $nuevo){
-        
-        $newpass = md5($nuevo->contraseña);
+        if ($nuevo->contraseña != "") {
+            $newpass = md5($nuevo->contraseña);
 
-        if ($newpass != null) {
-            $user->update([
-                'contraseña' => $newpass,
-            ]);
+            if ($newpass != null) {
+                $user->update([
+                    'contraseña' => $newpass,
+                ]);
+            }
         }
+        
     }
 
     public function GetUserxID(Request $request){
@@ -286,7 +344,21 @@ class AdministradoresController extends Controller
         ]);
         
         if (str_contains($request->usuario, "@")) {
-            //$admin = Administradores::whre('_id', '=', $request->id)->first();
+            
+            $usuario = Usuarios::where('usuario', '=', $request->usuario)->first();
+            $empresas = $usuario->departamentos->empresa;
+            $departamento = $usuario->departamentos;
+            //A cada empresa le añado sus departamentos
+            $empresas->departamentos = $empresas->departamentos;
+            /*foreach ($empresas as $e) {
+                $e->departamentos = $e->departamentos;
+            }*/
+
+            //Le añado las empresas con sus dptos al usuario 
+            $usuario->empresas = $empresas;
+            //Lo retorno
+            return json_encode($usuario);
+
         }else{
             $admin = Administradores::where('_id', '=', $request->id)->first();
             $empresas = $admin->empresas;
@@ -311,7 +383,7 @@ class AdministradoresController extends Controller
     }
 
     public function GetNotificaciones($id){
-        $logs = Logs::where('admin', '=', $id)->get();
+        $logs = Logs::where('usuario', '=', $id)->get();
         
         foreach ($logs as $l) {
             if ($l->usuarioRegistrado != null) {
@@ -438,5 +510,6 @@ class AdministradoresController extends Controller
             return response($respuesta, 200);
         }
     }
+     
 }
 

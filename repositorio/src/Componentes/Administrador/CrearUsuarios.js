@@ -80,8 +80,6 @@ class CrearUsuarios extends React.Component {
     }
     /**Guardar */
 
-    
-
     handleUpload = ( info ) => {
 
         var file = info.fileList[0];
@@ -89,6 +87,7 @@ class CrearUsuarios extends React.Component {
             this.setState({ foto: file });
         }
     };
+
     VerificateImg = (file) => {
 
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -101,55 +100,71 @@ class CrearUsuarios extends React.Component {
         }
         return isJpgOrPng && isLt2M;
     }
+    
     handleChangeSelect = value => {
         this.setState({ pregunta: value });
     }   
     
-    showConfirm = (event) => {
-        var Usuario = {};
-        this.setState({
-            admin: this.usuario._id,
-            usuario: this.state.usuario +"@"+ this.state.empresas.nombre.trim(),
-            foto: 0,
-            tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo}, ()=>{
-                Usuario = {
-                    foto: this.state.foto,
-                    admin: this.state.admin,
-                    nombre: this.state.nombre,
-                    apellido: this.state.apellido,
-                    usuario: this.state.usuario,
-                    contraseña: this.state.contraseña,
-                    email: this.state.email,
-                    pregunta: this.state.pregunta,
-                    respuesta: this.state.respuesta,
-                    departamento: this.state.departamento,
-                    tipo: this.state.tipo
-                }
-            }
-        )
-        confirm({
-          title: '¿Está seguro que desea crear a '+this.state.nombre+'?',
-          content: '',
-          onOk() {
-            message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
+    validarCampos = ()=>{
+        if (this.state.nombre === "" || this.state.apellido === "" ||
+        this.state.usuario === "" || this.state.email === "" || this.state.pregunta === "" ||
+        this.state.contraseña === "" || this.state.respuesta === "") {
             
-            RegUser(Usuario).then(res =>{
-                message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
-                console.log("res", res.data);
-                var sesion ={
-                    header: "Crear usuarios",
-                    action: "CrearUsuarios",
-                    menu: '3.2'
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    showConfirm = (event) => {  
+        var Usuario = {};
+        if (!this.validarCampos()) {
+            message.error("Hay campos vacíos");
+        }else{
+            this.setState({
+                admin: this.usuario._id,
+                usuario: this.state.usuario +"@"+ this.state.empresas.nombre.trim(),
+                foto: 0,
+                tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo}, ()=>{
+                    Usuario = {
+                        foto: this.state.foto,
+                        admin: this.state.admin,
+                        nombre: this.state.nombre,
+                        apellido: this.state.apellido,
+                        usuario: this.state.usuario,
+                        contraseña: this.state.contraseña,
+                        email: this.state.email,
+                        pregunta: this.state.pregunta,
+                        respuesta: this.state.respuesta,
+                        departamento: this.state.departamento,
+                        tipo: this.state.tipo
+                    }
                 }
-                localStorage.setItem('state', JSON.stringify(sesion));
-                window.location.reload();
-            }).catch(err =>{
-                message.error({ content: 'Algo salió mal', key });
-                console.error("Error: ", err)
+            )
+            confirm({
+              title: '¿Está seguro que desea crear a '+this.state.nombre+'?',
+              content: '',
+              onOk() {
+                message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
+                
+                RegUser(Usuario).then(res =>{
+                    message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
+                    console.log("res", res.data);
+                    var sesion ={
+                        header: "Crear usuarios",
+                        action: "CrearUsuarios",
+                        menu: '3.2'
+                    }
+                    localStorage.setItem('state', JSON.stringify(sesion));
+                    window.location.reload();
+                }).catch(err =>{
+                    message.error({ content: 'Algo salió mal', key });
+                    console.error("Error: ", err)
+                });
+              }
             });
-          }
-        });
-      }
+        }
+    }
     /** Iconos */
     checkPwd = () =>{
         if(this.state.contraseña === this.state.confirmacion){

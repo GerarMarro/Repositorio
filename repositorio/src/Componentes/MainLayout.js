@@ -34,14 +34,14 @@ class MainLayout extends React.Component {
 
   componentDidMount(){
     var old = localStorage.getItem("usuario");
-    
-    if (old !== undefined) {
+    if (old !== null) {
       message.success({ content: 'Hay una sesión encontrada', key });
       var oldId = localStorage.getItem("id");
       GetUser(oldId, old).then(res =>{
+        console.log(res.data)
         this.Logueado(res.data);
       }).catch(err =>{
-        console.log("Hola:", err);
+        console.log(err);
       });
       
     }else{
@@ -70,7 +70,6 @@ class MainLayout extends React.Component {
 
   Logueado = (usuarioL) =>{
     var oldSession = JSON.parse(localStorage.getItem('state'));
-
     if (String(usuarioL.usuario).indexOf("@") <= 0) {
       if (oldSession === null) {
         this.setState({
@@ -101,6 +100,36 @@ class MainLayout extends React.Component {
         console.error(err);
       })
       
+    }else{
+      if (oldSession === null) {
+        this.setState({
+          session : 2,
+          usuario: usuarioL,
+          header: "Bienvenido", 
+          action: "Bienvenido", 
+          menu: ''
+        }, ()=>{
+          localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("id", this.state.usuario._id);
+        });
+      }else{
+        this.setState({
+          session : 2,
+          usuario: usuarioL,
+          header: oldSession.header, 
+          action: oldSession.action, 
+          menu: oldSession.menu
+        }, ()=>{
+          localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("id", this.state.usuario._id);
+        });
+      }  
+      GetNotificaciones(this.state.usuario._id).then(res =>{
+        this.setState({notificaciones:res.data}, () => console.log(res.data))
+        
+      }).catch(err=>{
+        console.error(err);
+      })
     }
     
     return ;
@@ -149,7 +178,7 @@ class MainLayout extends React.Component {
         </>
         );
       }
-    }else if (this.state.session === 1) {
+    }else if (this.state.session > 0) {
       
       if (this.state.action === "Bienvenido") {
         return(
@@ -168,9 +197,9 @@ class MainLayout extends React.Component {
           <>
             <Content
                 className="App"
-                style={{height:"1460px"}}
+                style={this.state.session === 2 ? {height:"100%"} : {height:"1460px"}}
               >
-                <Dashboard notificaciones={this.state.notificaciones} admin={this.state.usuario} />
+                <Dashboard notificaciones={this.state.notificaciones} admin={this.state.usuario} sesion={this.state.session} />
                 
               </Content>
           </>
@@ -194,7 +223,7 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
-                <Perfil usuario={this.state.usuario} color={coloresRandom()} actualizarUsuario={this.actualizarUsuario} />
+                <Perfil usuario={this.state.usuario} color={coloresRandom()} sesion={this.state.session} actualizarUsuario={this.actualizarUsuario} />
                 
               </Content>
           </>
@@ -225,8 +254,6 @@ class MainLayout extends React.Component {
         );
       }
 
-    }else if (this.state.session === 2) {
-      
     }
 
     
@@ -235,6 +262,7 @@ class MainLayout extends React.Component {
 
   MenusDispo = () =>{
     if (this.state.session === 0) {
+      
       return (
         <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.state.menu]}>
           <Menu.Item key="1" icon={<UserOutlined />} onClick={() => this.setState({ action: "Ingresar", header: "Ingresar" })}>
@@ -249,7 +277,7 @@ class MainLayout extends React.Component {
         </Menu>
       )
     }else if (this.state.session === 1) {
-      
+     
       return (
         <Menu theme="dark" mode="inline" selectedKeys={[this.state.menu]}>
           
@@ -325,26 +353,42 @@ class MainLayout extends React.Component {
 
       )
     }else if (this.state.session === 2) {
+      console.log(this.state)
       return (
         <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.state.menu]}>
           
-          <Menu.Item key="1">Dashboard</Menu.Item>
+          <Menu.Item key="1" icon={<DashboardOutlined />} onClick={() => this.setState({ action: "Dashboard", header: "Dashboard", menu:'1' })}>Dashboard</Menu.Item>
+      
           <SubMenu
-              key="sub1"
-              title={
+            key={"2"}
+            title={
+              <>
+                <BankOutlined />
                 <span>
-                  <span>Empresa</span>
+                  <span>{this.state.usuario.empresas.nombre}</span>
                 </span>
-              }
-            >
-              <Menu.Item key="2">Departamento 1</Menu.Item>
-              <Menu.Item disabled key="3">Departamento 2</Menu.Item>
-            </SubMenu>
-          <Menu.Item key="4" icon={<UserAddOutlined />} onClick={() => this.setState({ action: "Registrar" })}>
-            Registrar
+              </>
+            }
+            onTitleClick={() => this.setState({ empresa: this.state.usuario.empresas})}
+          >
+            
+            <Menu.Item key={"2.1"} 
+              icon={this.state.usuario.departamentos.tipo === 0 ?  <ReadOutlined /> : <UploadOutlined />}
+              onClick={() => this.setState({ action: "Departamento", header: "Departamentos", departamento: this.state.usuario.departamentos, menu: '2.1'})}
+              >
+                {this.state.usuario.departamentos.nombre}
+              
+            </Menu.Item>
+          </SubMenu>
+    
+          <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.setState({ action: "Perfil", header: "Perfil", menu:'4'})}>
+            Perfil
           </Menu.Item>
-          <Menu.Item key="5" icon={<UnlockOutlined />} onClick={() => this.setState({ action: "Recuperar contraseña" })}>
-            ¿Olvido su contraseña?
+          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() =>{ 
+            this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' });
+            localStorage.clear();
+            }}>
+            Cerrar sesión
           </Menu.Item>
         </Menu>
       )

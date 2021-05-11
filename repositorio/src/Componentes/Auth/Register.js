@@ -59,7 +59,9 @@ class Register extends React.Component {
 
         var file = info.fileList[0];
         if(this.VerificateImg(file)){
-            this.setState({ foto: file });
+            this.setState({ foto: file }, ()=>{
+                console.log(this.state.foto);
+            });
         }
     };
 
@@ -161,7 +163,7 @@ class Register extends React.Component {
     handleChangeText(event) {
         this.setState({ 
             [event.target.name]: event.target.value
-        });
+        }, ()=>{console.log(this.state)});
     }
 
     checkPwd = () =>{

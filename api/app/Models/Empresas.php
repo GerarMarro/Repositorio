@@ -25,4 +25,6 @@ class Empresas extends Eloquent
     public function administrador(){
         return $this->hasOne(Administradores::class, '_id', 'propietario');
     }
+
+    // $gastos=Gasto_personal::where('proyecto', '=', $proy)->get();
 }

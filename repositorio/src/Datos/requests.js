@@ -7,7 +7,8 @@ import {registrar, getPregunta,
         subirarchivo, leerarchivo,
         todosdepartamentos, crearempresa,
         empresasxadmin, creardepartamento,
-        organizacion, allusers } from './rutas';
+        organizacion, allusers 
+} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -75,7 +76,6 @@ function GetUser(id, user) {
 }
 
 function RegUser(datos){
-    console.log("Reguser", datos)
     
     return axios.post(reguser, {
             foto: datos.foto,

@@ -35,3 +35,4 @@ Route::get('empresasxadmin/{id}', 'App\Http\Controllers\AdministradoresControlle
 Route::post('creardepartamento', 'App\Http\Controllers\AdministradoresController@CrearDepartamentos');
 Route::get('organizacion/{id}', 'App\Http\Controllers\UsuariosController@TodaOrganizacion');
 Route::get('allusers/{id}', 'App\Http\Controllers\AdministradoresController@AllUsers');
+Route::get('allempresas', 'App\Http\Controllers\AdministradoresController@AllEmpresas');
