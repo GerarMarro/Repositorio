@@ -8,8 +8,7 @@ import {registrar, getPregunta,
         todosdepartamentos, crearempresa,
         empresasxadmin, creardepartamento,
         organizacion, allusers,
-        datos, actualizardatos
-} from './rutas';
+        datos, actualizardatos } from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -24,13 +23,13 @@ function Registrar(datos) {
         empresa: datos.empresa,
         lectura: datos.lectura,
         escritura: datos.escritura
-    } )
+    })
 }
 
 function GetPregunta(datos) {
-    
+
     return axios.get(getPregunta, {
-        params:{
+        params: {
             usuario: datos.usuario,
             email: datos.email,
         }
@@ -46,14 +45,14 @@ function ActualizarContra(datos, hora) {
 
 function Ingresar(user, contraseña) {
     return axios.get(authUser, {
-            params:{
-                usuario: user,
-                contraseña: contraseña,
-            }
-        } );
+        params: {
+            usuario: user,
+            contraseña: contraseña,
+        }
+    });
 }
 
-function ActualizarUsuario(datos){
+function ActualizarUsuario(datos) {
     return axios.put(upduser, {
         _id: datos._id,
         foto: datos.foto,
@@ -69,50 +68,49 @@ function ActualizarUsuario(datos){
 
 function GetUser(id, user) {
     return axios.get(getuser, {
-        params:{
+        params: {
             id: id,
             usuario: user
         }
     });
 }
 
-function RegUser(datos){
-    
+function RegUser(datos) {
+
     return axios.post(reguser, {
-            foto: datos.foto,
-            admin: datos.admin,
-            nombre: datos.nombre,
-            apellido: datos.apellido,
-            usuario: datos.usuario,
-            contraseña: datos.contraseña,
-            email: datos.email,
-            pregunta: datos.pregunta,
-            respuesta: datos.respuesta,
-            departamento: datos.departamento,
-            tipo: datos.tipo
-        }
-    );
+        foto: datos.foto,
+        admin: datos.admin,
+        nombre: datos.nombre,
+        apellido: datos.apellido,
+        usuario: datos.usuario,
+        contraseña: datos.contraseña,
+        email: datos.email,
+        pregunta: datos.pregunta,
+        respuesta: datos.respuesta,
+        departamento: datos.departamento,
+        tipo: datos.tipo
+    });
 }
 
 function GetUserAdmin(id) {
     return axios.get(getuseradmin, {
-        params:{
+        params: {
             id: id
         }
     });
 }
 
 function DelUser(id, admin) {
-    
+
     return axios.delete(deluser + id, {
-        data:{
+        data: {
             admin: admin
         }
     });
 }
 
 function GetNotificaciones(id) {
-    return axios.get(getnotificaciones+id);
+    return axios.get(getnotificaciones + id);
 }
 
 function GuardarDatos(datos) {
@@ -146,7 +144,7 @@ function crearEmpresa(datos) {
     });
 }
 
-function empresasxAdmin(id){
+function empresasxAdmin(id) {
     return axios.get(empresasxadmin + id);
 }
 
@@ -155,6 +153,7 @@ function crearDepartamento(datos) {
         nombre: datos.nombre,
         empresa: datos.empresa,
         admin: datos.admin
+
     });
 }
 
@@ -163,7 +162,7 @@ function Organizacion(id) {
 }
 
 function AllUsers(id) {
-    return axios.get(allusers+id);
+    return axios.get(allusers + id);
 }
 
 function TodosDatos(id, departamento) {
@@ -183,12 +182,12 @@ function sobreDatos(datos) {
 }
 
 export {
-    Registrar, 
-    GetPregunta, 
-    ActualizarContra, 
-    Ingresar, 
-    ActualizarUsuario, 
-    GetUser, 
+    Registrar,
+    GetPregunta,
+    ActualizarContra,
+    Ingresar,
+    ActualizarUsuario,
+    GetUser,
     RegUser,
     GetUserAdmin,
     DelUser,
