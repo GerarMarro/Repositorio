@@ -18,6 +18,7 @@ import {
     creardepartamento,
     organizacion,
     allusers
+
 } from './rutas';
 
 function Registrar(datos) {
@@ -32,8 +33,7 @@ function Registrar(datos) {
         respuesta: datos.respuesta,
         empresa: datos.empresa,
         lectura: datos.lectura,
-        escritura: datos.edicion
-
+        escritura: datos.escritura
     })
 }
 
@@ -164,6 +164,7 @@ function crearDepartamento(datos) {
         nombre: datos.nombre,
         empresa: datos.empresa,
         admin: datos.admin
+
     });
 }
 
