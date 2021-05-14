@@ -22,7 +22,7 @@ class TablaDatos extends React.Component{
               ref={node => {
                 this.searchInput = node;
               }}
-              placeholder={`Search ${dataIndex}`}
+              placeholder={`Buscar ${dataIndex}`}
               value={selectedKeys[0]}
               onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
               onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
@@ -31,7 +31,7 @@ class TablaDatos extends React.Component{
             <Button
               type="primary"
               onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-              icon="search"
+              icon={<SearchOutlined />}
               size="small"
               style={{ width: 90, marginRight: 8 }}
             >

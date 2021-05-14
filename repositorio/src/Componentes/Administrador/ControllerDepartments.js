@@ -1,16 +1,17 @@
 import React from 'react';
 import Lectura from './Lectura';
-import Escritura from './Escritura';
+
+import MostrarEscritura from './MostrarEscritura';
 
 class Controller extends React.Component {
    
 
     components = () =>{
-        console.clear();
         if (this.props.departamento.tipo === 0) {
             return <Lectura departamento={this.props.departamento} empresa={this.props.empresa} />
         }else {
-            return < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.empresa.nombre} />
+            
+            return < MostrarEscritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.empresa.nombre} />
         }
     } 
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, Input, Space, message, Button, Breadcrumb } from 'antd';
+import { Card, Input, Space, message, Button } from 'antd';
 import { FileInput } from '@blueprintjs/core';
-import { GuardarDatos } from '../../Datos/requests';
+import { GuardarDatos, sobreDatos } from '../../Datos/requests';
 import * as XLSX from 'xlsx';
 
 const { TextArea } = Input;
@@ -18,6 +18,17 @@ class Escritura extends React.Component {
     descripcion: ""
   }
   
+  componentDidMount(){
+    if (this.props.datos) {
+      this.setState({
+        data: this.props.datos.datos,
+        descripcion: this.props.datos.descripcion,
+        titulo: this.props.datos.titulo,
+        tipo: this.props.datos.tipo
+      })
+    }
+  }
+
   handleFileLoad = (e) => {
     if (e.target.files.length > 0) {
         try {
@@ -106,26 +117,48 @@ class Escritura extends React.Component {
 
   guardarDatos = () =>{
     message.loading("Sus datos se estan subiendo espere un poco...");
-    let data = {
-      titulo: this.state.titulo,
-      descripcion: this.state.descripcion,
-      tipo: this.state.tipo,
-      datos: this.state.data,
-      departamento: this.props.departamento._id,
-      empresa: this.props.departamento.propietario,
-      admin: this.esAdmin(this.props.usuario),
-      usuario: this.props.usuario._id
-    }
-    GuardarDatos(data)
-    .then(res => {
-      message.success("Sus datos ya estan en nuestra base de datos.");
+    if (this.props.datos) {
+      let data = {
+        id: this.props.datos._id,
+        titulo: this.state.titulo,
+        descripcion: this.state.descripcion,
+        tipo: this.state.tipo,
+        datos: this.state.data,
+      }
+      console.log(data)
+      sobreDatos(data)
+      .then(res =>{
+        message.success("Sus datos se han actualizado");
+        window.location.reload()
+      })
+      .catch(err =>{
+        message.error("Algo salió mal");
+        console.log(err)
+      })
+
       
-    localStorage.removeItem('state');
-    window.location.reload();
-    }).catch(err =>{
-      message.error("Algo salió mal");
-      console.error(err);
-    })
+    }else{
+      let data = {
+        titulo: this.state.titulo,
+        descripcion: this.state.descripcion,
+        tipo: this.state.tipo,
+        datos: this.state.data,
+        departamento: this.props.departamento._id,
+        empresa: this.props.departamento.propietario,
+        admin: this.esAdmin(this.props.usuario),
+        usuario: this.props.usuario._id
+      }
+      GuardarDatos(data)
+      .then(res => {
+        message.success("Sus datos ya estan en nuestra base de datos.");
+        
+      localStorage.removeItem('state');
+      window.location.reload();
+      }).catch(err =>{
+        message.error("Algo salió mal");
+        console.error(err);
+      })
+    }
   }
 
   esAdmin = (usuario) =>{
@@ -136,25 +169,29 @@ class Escritura extends React.Component {
     }
   }
 
-  bread = 
-  ( 
-      <Breadcrumb>
-          <Breadcrumb.Item>{this.props.tituloempresa}</Breadcrumb.Item>
-          <Breadcrumb.Item>{this.props.departamento.nombre}</Breadcrumb.Item>
-      </Breadcrumb>
-  )
-
   render(){
       return(
-        <Card title={this.bread} style={{ width: "90%" }} actions={[
-          <Button type="primary" onClick={this.guardarDatos}>Guardar</Button>
+        <Card title="Subir Archivos" style={{ width: "100%" }} actions={[
+          <Space direction="horizontal">
+            <Button type="primary" onClick={this.guardarDatos}>{ this.props.datos ? "Editar" : "Guardar"}</Button>
+            { this.props.datos ?  <Button type="danger" onClick={this.props.cancel}>Cancelar</Button>: ""}
+          </Space>
         ]}>
           <Space direction="vertical" style={{width:"100%"}}>
-            <Input size="large" name="titulo" placeholder="Título" onChange={this.handleInputs} allowClear />
+            <Input 
+              size="large" 
+              name="titulo" 
+              placeholder="Título" 
+              onChange={this.handleInputs} 
+              defaultValue={ this.props.datos ? this.props.datos.titulo : ""}
+              allowClear 
+            />
+
             <TextArea
               name="descripcion"
               onChange={this.handleInputs}
               placeholder="Descripción"
+              defaultValue={ this.props.datos ? this.props.datos.descripcion : ""}
             />
             <FileInput 
               style={{width:"100%"}}

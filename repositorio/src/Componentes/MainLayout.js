@@ -211,6 +211,7 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
+                
                 <Controller departamento={this.state.departamento} usuario={this.state.usuario} empresa={this.state.empresa} />
                 
               </Content>
@@ -299,7 +300,10 @@ class MainLayout extends React.Component {
                 {e.departamentos.map((d, indexD)=>
                   <Menu.Item key={"2." + index +"."+ indexD} 
                   icon={d.tipo === 0 ?  <ReadOutlined /> : <UploadOutlined />}
-                  onClick={() => this.setState({ action: "Departamento", header: "Departamentos", departamento: d, menu: '2.'+index+"."+indexD})}
+                  onClick={() => {
+                    this.setState({ action: "Departamento", header: "Departamentos", departamento: d, menu: '2.'+index+"."+indexD}) 
+                    //console.log(d)
+                  } }
                   >
                     {d.nombre}
                   

@@ -36,3 +36,5 @@ Route::post('creardepartamento', 'App\Http\Controllers\AdministradoresController
 Route::get('organizacion/{id}', 'App\Http\Controllers\UsuariosController@TodaOrganizacion');
 Route::get('allusers/{id}', 'App\Http\Controllers\AdministradoresController@AllUsers');
 Route::get('allempresas', 'App\Http\Controllers\AdministradoresController@AllEmpresas');
+Route::get('datos/{id}/{departamento}', 'App\Http\Controllers\UsuariosController@ObtenerDatos');
+Route::get('actualizardatos', 'App\Http\Controllers\UsuariosController@ActualizarDatos');

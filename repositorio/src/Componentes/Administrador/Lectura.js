@@ -19,6 +19,7 @@ class Lectura extends React.Component {
     titulo: ""
   };
 
+
   componentDidMount(){ 
     todosDepartamentos(this.props.empresa._id)
     .then(res =>{
@@ -119,7 +120,7 @@ class Lectura extends React.Component {
                     <>
                       <Space direction="vertical" style={{width:"100%"}}>
                         <Descriptions bordered>
-                          <Descriptions.Item label="Tipo">{ item.tipo === "csv" ? "CSV" : "Excel"}</Descriptions.Item>
+                          <Descriptions.Item label="Tipo">{item.tipo}</Descriptions.Item>
                           <Descriptions.Item label="Creado por">{ item.usuarioprop ? item.administrador.nombre : item.usuarioprop.nombre }</Descriptions.Item>
                           <Descriptions.Item label="Subido en">{new Date(item.created_at).toLocaleDateString()}</Descriptions.Item>
                           <Descriptions.Item label="A las">{ new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Descriptions.Item>

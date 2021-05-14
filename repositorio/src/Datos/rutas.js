@@ -17,6 +17,8 @@ var empresasxadmin = ApiRoot + "empresasxadmin/";
 var creardepartamento = ApiRoot + "creardepartamento";
 var organizacion = ApiRoot + "organizacion/";
 var allusers = ApiRoot + "allusers/";
+var datos = ApiRoot + "datos/";
+var actualizardatos = ApiRoot + "actualizardatos";
 
 export default ApiRoot;
 export {
@@ -37,5 +39,7 @@ export {
     empresasxadmin,
     creardepartamento,
     organizacion,
-    allusers
+    allusers,
+    datos,
+    actualizardatos
 };

@@ -7,7 +7,8 @@ import {registrar, getPregunta,
         subirarchivo, leerarchivo,
         todosdepartamentos, crearempresa,
         empresasxadmin, creardepartamento,
-        organizacion, allusers 
+        organizacion, allusers,
+        datos, actualizardatos
 } from './rutas';
 
 function Registrar(datos) {
@@ -165,6 +166,22 @@ function AllUsers(id) {
     return axios.get(allusers+id);
 }
 
+function TodosDatos(id, departamento) {
+    return axios.get(datos+id+"/"+departamento);
+}
+
+function sobreDatos(datos) {
+    return axios.get(actualizardatos, {
+        params:{
+            id: datos.id,
+            titulo: datos.titulo,
+            descripcion: datos.descripcion,
+            datos: datos.datos,
+            tipo: datos.tipo
+        }
+    });
+}
+
 export {
     Registrar, 
     GetPregunta, 
@@ -183,5 +200,7 @@ export {
     empresasxAdmin,
     crearDepartamento,
     Organizacion,
-    AllUsers
+    AllUsers,
+    TodosDatos,
+    sobreDatos
 };

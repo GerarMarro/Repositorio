@@ -7,6 +7,7 @@ use App\Models\Usuarios;
 use App\Models\Departamentos;
 use App\Models\Logs;
 use App\Models\Empresas;
+use App\Models\Datos;
 
 class UsuariosController extends Controller
 {
@@ -74,4 +75,43 @@ class UsuariosController extends Controller
         return response(json_encode($empresas), 200);
     }   
 
+    public function ObtenerDatos($id){
+        if ($this->IsAdmin($id)) {
+            $datos = Datos::where('admin', '=', $id)->get();  
+        }else{
+            $datos = Datos::where('usuario', '=', $id)->get();
+        }
+        foreach ($datos as $d) {
+
+            $d->creado = date_format($d->created_at, "d/m/Y");
+            $d->actualizado = date_format($d->updated_at, "d/m/Y");
+
+            if ($d->tipo == "csv") {
+                $d->tipoA = "CSV";
+            }else if ($d->tipo == "xlsx") {
+                $d->tipoA = "Excel";
+            }
+        }
+        return response( $datos, 200);
+    }
+
+    public function IsAdmin($id){
+        $usuario = Usuarios::where('_id', '=', $id)->first();
+        if ($usuario == null) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function ActualizarDatos(Request $request){
+        $datosA = Datos::where('_id', '=', $request->id)->first();
+        $datosA->update([
+            "titulo" => $request->titulo,
+            "descripcion" => $request->descripcion,
+            "datos" => $request->datos,
+            "tipo" => $request->tipo,
+        ]);
+        return response($datosA, 200);
+    }
 }
