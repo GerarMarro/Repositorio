@@ -11,6 +11,7 @@ use App\Models\Datos;
 
 class UsuariosController extends Controller
 {
+
     public function Registrar(Request $request){
         request()->validate([
             'admin' => 'required',
@@ -114,4 +115,5 @@ class UsuariosController extends Controller
         ]);
         return response($datosA, 200);
     }
+    
 }

@@ -183,7 +183,7 @@ class Escritura extends React.Component {
               name="titulo" 
               placeholder="Título" 
               onChange={this.handleInputs} 
-              defaultValue={ this.props.datos ? this.props.datos.titulo : ""}
+              defaultValue={ this.props.datos ? this.props.datos.titulo : "" }
               allowClear 
             />
 

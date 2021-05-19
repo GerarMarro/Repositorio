@@ -168,7 +168,7 @@ class TablaEscritura extends React.Component {
                     visible={this.state.visible} 
                     onOk={this.handleOk} 
                     onCancel={this.handleCancel} 
-                    width={8000}
+                    width={6000}
                     destroyOnClose={true}
                     footer={[]} 
                 >
