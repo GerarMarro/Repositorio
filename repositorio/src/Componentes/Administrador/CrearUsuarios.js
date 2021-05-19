@@ -8,7 +8,7 @@ import {
     Input, Space, Card, 
     Button, Upload, Select, 
     message, Typography,
-    Avatar, Breadcrumb, Modal
+    Avatar, Breadcrumb, Modal, Form
 } from 'antd';
 import { RegUser } from '../../Datos/requests';
 import 'material-icons';
@@ -118,55 +118,47 @@ class CrearUsuarios extends React.Component {
         }
     }
 
-    showConfirm = (event) => {  
+    showConfirm = (values) => {  
         var Usuario = {};
-        if (!this.validarCampos()) {
-            message.error("Hay campos vacíos");
+        if (values.contraseña !== values.confirmacion) {
+            message.error("Las contraseñas no coinciden")
         }else{
-            this.setState({
+            Usuario = {
+                foto: this.foto,
                 admin: this.usuario._id,
-                usuario: this.state.usuario +"@"+ this.state.empresas.nombre.trim(),
-                foto: 0,
-                tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo}, ()=>{
-                    Usuario = {
-                        foto: this.foto,
-                        admin: this.state.admin,
-                        nombre: this.state.nombre,
-                        apellido: this.state.apellido,
-                        usuario: this.state.usuario,
-                        contraseña: this.state.contraseña,
-                        email: this.state.email,
-                        pregunta: this.state.pregunta,
-                        respuesta: this.state.respuesta,
-                        departamento: this.state.departamento,
-                        tipo: this.state.tipo
-                    }
-                    console.log(Usuario)
-                }
-            )
+                nombre: values.nombre,
+                apellido: values.apellido,
+                usuario: values.usuario + "@" +  this.state.empresas.nombre.trim(),
+                contraseña: values.contraseña,
+                email: values.email,
+                pregunta: values.pregunta,
+                respuesta: values.respuesta,
+                departamento: values.departamento,
+                tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo
+            }
             confirm({
-              title: '¿Está seguro que desea crear a '+this.state.nombre+'?',
-              content: '',
-              onOk() {
-                message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
-                //console.log(this1.state);
-                
-                RegUser(Usuario).then(res =>{
-                    message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
-                    console.log("res", res.data);
-                    var sesion ={
-                        header: "Crear usuarios",
-                        action: "CrearUsuarios",
-                        menu: '3.2'
-                    }
-                    localStorage.setItem('state', JSON.stringify(sesion));
-                    window.location.reload();
-                }).catch(err =>{
-                    message.error({ content: 'Algo salió mal', key });
-                    console.error("Error: ", err)
-                });
-              }
-            });
+                title: '¿Está seguro que desea crear a '+ values.nombre +'?',
+                content: '',
+                onOk() {
+                  message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
+                  //console.log(this1.state);
+                  
+                  RegUser(Usuario).then(res =>{
+                      message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
+                      console.log("res", res.data);
+                      var sesion ={
+                          header: "Crear usuarios",
+                          action: "CrearUsuarios",
+                          menu: '3.2'
+                      }
+                      localStorage.setItem('state', JSON.stringify(sesion));
+                      window.location.reload();
+                  }).catch(err =>{
+                      message.error({ content: 'Algo salió mal', key });
+                      console.error("Error: ", err)
+                  });
+                }
+              });
         }
     }
     /** Iconos */
@@ -207,12 +199,7 @@ class CrearUsuarios extends React.Component {
         return(
             <>
                 
-                <Card title={this.bread} bordered={true} style={{ width: 900, height:"100%", }}
-                    actions={[
-                    <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' onClick={this.showConfirm}>
-                        Guardar
-                    </Button>
-                ]}>
+                <Card title={this.bread} bordered={true} style={{ width: 900, height:"100%", }}>
 
                     <Space direction="vertical" style={{width:"25%", textAlign:"left"}}>
                         <Avatar style={{ backgroundColor: this.props.color, verticalAlign: 'middle' }} size={190}>
@@ -228,67 +215,87 @@ class CrearUsuarios extends React.Component {
                         </Upload>
                     </Space>
                     <Space direction="vertical" style={{width:"70%", textAlign:"left"}}>
-                        <Input required allowClear name="nombre" placeholder="Nombre" size="large" onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                        <Input required allowClear name="apellido" placeholder="Apellido" size="large" onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                        <Input.Group compact>
-                            <Input required allowClear name="usuario" placeholder="Usuario" size="large" style={{width:"70%"}} onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                            <Select 
-                                defaultValue="[Empresas]"
-                                size="large"
-                                style={{ width: "30%" }} 
-                                onChange={this.handleChangeSelectEmpresa}
-                                >
+                        <Form onFinish={this.showConfirm}>
+                            <Form.Item name="nombre" >
+                                <Input required allowClear placeholder="Nombre" size="large"  prefix={<UserOutlined />} />    
+                            </Form.Item> 
+                            <Form.Item name="apellido" >
+                                <Input required allowClear placeholder="Apellido" size="large" prefix={<UserOutlined />} />   
+                            </Form.Item> 
+                            <Input.Group compact style={{width:"100%"}}>
+                                <Form.Item name="usuario" style={{width:"70%"}} >
+                                    <Input required allowClear placeholder="Usuario" size="large" prefix={<UserOutlined />} />
+                                </Form.Item>
+                                <Form.Item style={{width:"30%"}}>
+                                    <Select 
+                                        defaultValue="[Empresas]"
+                                        size="large"
+                                        onChange={this.handleChangeSelectEmpresa}
+                                    >
 
-                                {this.usuario.empresas.map((e, index)=>
-                                    <Option key={index} value={e._id}>@{e.nombre.trim()}</Option>
-                                )}
-                            </Select>
-                        </Input.Group>
+                                        {this.usuario.empresas.map((e, index)=>
+                                            <Option key={index} value={e._id}>@{e.nombre.trim()}</Option>
+                                        )}
+                                    </Select>
+                                </Form.Item>
+                                
+                            </Input.Group>
+                            <Form.Item name="email" >
+                                <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
+                            </Form.Item>
+                            <Form.Item name="departamento" initialValue="[Escoge departamento]">
+                                <Select required 
+                                    disabled={this.activarDep}
+                                    size="large"
+                                    key="Departamentos" 
+                                    style={{ width: "100%" }} 
+                                    onChange={this.handleChangeSelectDepartamentos}
+                                >
+                                {this.state.departamentos.map((d, index) =>{
+                                    return <Option key={index} value={d._id}>{d.nombre}</Option>
+                                })}
+                                
+                                </Select>
+                            </Form.Item>
+                            <Form.Item name="pregunta" initialValue="[Puedes dejar que el usuario cambie su pregunta despues]" >
+                                <Select 
+                                    key="Preguntas"
+                                    size="large"
+                                    style={{ width: "100%" }} 
+                                    onChange={this.handleChangeSelect}
+                                >
+                                    <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
+                                    <Option value="¿Cuál es tu trabajo soñado?">¿Cuál es tu trabajo soñado?</Option>
+                                    <Option value="¿Cuál es tu personaje favorito?">¿Cuál es tu personaje favorito?</Option>
+                                    <Option value="¿Quién es tu actor favorito?">¿Quién es tu actor favorito?</Option>
+                                </Select>
+                            </Form.Item>
+                            <Form.Item name="respuesta">
+                               <Input allowClear placeholder="Respuesta" size="large" prefix={<UnlockOutlined />} />
+                            </Form.Item>
+                            <Form.Item name="contraseña">
+                                <Input.Password
+                                    size="large"
+                                    placeholder="Ingrese su nueva contraseña"
+                                    iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                    prefix={<this.checkPwd />}
+                                />
+                            </Form.Item>
+                            <Form.Item name="confirmacion">
+                                <Input.Password
+                                    size="large"
+                                    placeholder="Repita su contraseña"
+                                    iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                    prefix={<this.checkPwd />}
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" icon={<UserAddOutlined />}>
+                                    Guardar
+                                </Button>
+                            </Form.Item>
+                        </Form>
                         
-                        <Input required allowClear name="email" placeholder="Correo electrónico" size="large" onChange={this.handleChangeText} prefix={<this.email />} />
-                        <Select required 
-                            disabled={this.activarDep}
-                            size="large"
-                            name="departamento"
-                            key="Departamentos" 
-                            defaultValue="[Escoge departamento]" 
-                            style={{ width: "100%" }} 
-                            onChange={this.handleChangeSelectDepartamentos}
-                            >
-                            {this.state.departamentos.map((d, index) =>{
-                                return <Option key={index} value={d._id}>{d.nombre}</Option>
-                            })}
-                            
-                        </Select>
-                        <Select 
-                            name="pregunta"
-                            key="Preguntas"
-                            size="large"
-                            defaultValue="[Puedes dejar que el usuario cambie su pregunta despues]"
-                            style={{ width: "100%" }} 
-                            onChange={this.handleChangeSelect}>
-                            <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
-                                <Option value="¿Por quien te dejó tu ex?">¿Por quien te dejó tu ex?</Option>
-                                <Option value="¿Por qué ella no te ama?">¿Por qué ella no te ama?</Option>
-                                <Option value="¿Por qué eres un fracasado?">¿Por qué eres un fracasado?</Option>
-                        </Select>
-                        <Input allowClear name="respuesta" placeholder="Respuesta" size="large" onChange={this.handleChangeText} prefix={<UnlockOutlined />} />
-                        <Input.Password
-                            size="large"
-                            placeholder="Ingrese su nueva contraseña"
-                            name="contraseña"
-                            onChange={this.handleChangeText}
-                            iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                            prefix={<this.checkPwd />}
-                        />
-                        <Input.Password
-                            size="large"
-                            onChange={this.handleChangeText}
-                            name="confirmacion"
-                            placeholder="Repita su contraseña"
-                            iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                            prefix={<this.checkPwd />}
-                        />
                     </Space>
                 </Card>
             </>

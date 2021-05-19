@@ -116,49 +116,58 @@ class Escritura extends React.Component {
   }
 
   guardarDatos = () =>{
-    message.loading("Sus datos se estan subiendo espere un poco...");
-    if (this.props.datos) {
-      let data = {
-        id: this.props.datos._id,
-        titulo: this.state.titulo,
-        descripcion: this.state.descripcion,
-        tipo: this.state.tipo,
-        datos: this.state.data,
-      }
-      console.log(data)
-      sobreDatos(data)
-      .then(res =>{
-        message.success("Sus datos se han actualizado");
-        window.location.reload()
-      })
-      .catch(err =>{
-        message.error("Algo salió mal");
-        console.log(err)
-      })
-
-      
+    if (this.state.titulo === "" || this.state.titulo.includes(".") || this.state.titulo.includes("/") || this.state.titulo.includes('"')) {
+      message.error("Por favor escriba un título válido para la lectura de sus datos");
+    }else if (this.state.descripcion === "" || this.state.descripcion.includes(".") || this.state.descripcion.includes("/") || this.state.descripcion.includes('"')) {
+      message.error("Campo vacío descripción");
+    }else if (this.state.data === null) {
+      message.error("No se escogió archivo o archivo inválido");
     }else{
-      let data = {
-        titulo: this.state.titulo,
-        descripcion: this.state.descripcion,
-        tipo: this.state.tipo,
-        datos: this.state.data,
-        departamento: this.props.departamento._id,
-        empresa: this.props.departamento.propietario,
-        admin: this.esAdmin(this.props.usuario),
-        usuario: this.props.usuario._id
-      }
-      GuardarDatos(data)
-      .then(res => {
-        message.success("Sus datos ya estan en nuestra base de datos.");
+      message.loading("Sus datos se estan subiendo espere un poco...");
+      if (this.props.datos) {
+        let data = {
+          id: this.props.datos._id,
+          titulo: this.state.titulo,
+          descripcion: this.state.descripcion,
+          tipo: this.state.tipo,
+          datos: this.state.data,
+        }
+        console.log(data)
+        sobreDatos(data)
+        .then(res =>{
+          message.success("Sus datos se han actualizado");
+          window.location.reload()
+        })
+        .catch(err =>{
+          message.error("Algo salió mal");
+          console.log(err)
+        })
+
         
-      localStorage.removeItem('state');
-      window.location.reload();
-      }).catch(err =>{
-        message.error("Algo salió mal");
-        console.error(err);
-      })
+      }else{
+        let data = {
+          titulo: this.state.titulo,
+          descripcion: this.state.descripcion,
+          tipo: this.state.tipo,
+          datos: this.state.data,
+          departamento: this.props.departamento._id,
+          empresa: this.props.departamento.propietario,
+          admin: this.esAdmin(this.props.usuario),
+          usuario: this.props.usuario._id
+        }
+        GuardarDatos(data)
+        .then(res => {
+          message.success("Sus datos ya estan en nuestra base de datos.");
+          
+        localStorage.removeItem('state');
+        window.location.reload();
+        }).catch(err =>{
+          message.error("Algo salió mal");
+          console.error(err);
+        })
+      }
     }
+    
   }
 
   esAdmin = (usuario) =>{
