@@ -2,13 +2,14 @@ import React from 'react';
 import { 
     UserOutlined, EyeInvisibleOutlined, 
     EyeTwoTone,UploadOutlined,
-    UserAddOutlined, LockOutlined, 
+    SaveOutlined, 
     UnlockOutlined  } from '@ant-design/icons';
 import { 
     Input, Space, Card, 
     Button, Upload, Select, 
     message, Typography,
-    Avatar, Modal
+    Avatar, Modal,
+    Form
 } from 'antd';
 import 'material-icons';
 import {ActualizarUsuario, GetUser} from '../Datos/requests';
@@ -62,17 +63,12 @@ class Perfil extends React.Component {
     handleChangeText(event) {
         this.setState({
             [event.target.name] : event.target.value}, () =>{
-                console.log(this.state, "callback")
+                //console.log()
         });    
     }
 
     handleChangeSelect = value => {
         this.setState({ pregunta: value });
-    }
-    
-    componentDidUpdate(){
-        //console.log(this.state);
-        console.clear();
     }
 
     //Retorna el email de material-icons
@@ -151,48 +147,25 @@ class Perfil extends React.Component {
         });
     };
 
-    Camposvacios = () =>{
-        if(this.state.nombre === "" || this.state.apellido === "" ||
-            this.state.usuario === "" || this.state.email === "" || this.state.pregunta === "" || this.state.respuesta === "" || 
-            this.state.empresa === "" || this.state.escritura === "" || this.state.lectura === ""){
-
-            return true;
-
+    sendUserChange = (values) =>{
+        if (values.confirmacion !== values.contraseña) {
+            message.error("Las contraseñas no coinciden")
         }else{
-            return false;   
-        }
-    };
-
-    sendUserChange = () =>{
-        if (this.Camposvacios()) {
-            
-            message.error('Asegurate de que no hayan campos vacíos');
-
-        }else if (this.state.confirmacion !== this.state.contraseña) {
-            
-            message.error('Asegurate de que ambas contraseñas coincidan');
-            
-        }else if(this.state.usuario.includes("@") && this.state.usuario.includes("/") && this.state.usuario.includes("\\")){
-            
-            message.error('Asegurate de que no hayan caracteres especiales como @, / o \\');
-        
-        }else{
-            
             message.loading({ content: 'Estamos actualizando tu usuario', key });
-
+        
             var upd = {
                 _id: this.state.id,
                 foto: this.state.foto,
-                nombre: this.state.nombre,
-                apellido: this.state.apellido,
-                email: this.state.email,
-                usuario: this.state.usuario,
-                contraseña: this.state.contraseña,
-                confirmacion: this.state.confirmacion,
-                pregunta: this.state.pregunta,
-                respuesta: this.state.respuesta,
+                nombre: values.nombre,
+                apellido: values.apellido,
+                email: values.email,
+                usuario: values.usuario,
+                pregunta: values.pregunta,
+                respuesta: values.respuesta,
+                contraseña: values.contraseña,
+                confirmacion: values.confirmacion,
             };
-
+            
             ActualizarUsuario(upd).then(res =>{
                 this.foto = this.state.foto;
                 message.success({ content: 'Tu información ha sido actualizada, en la base de datos!', key, duration: 2 });
@@ -206,13 +179,10 @@ class Perfil extends React.Component {
     }
 
     actualizarMain = () =>{
-        message.loading({ content: 'Estamos trabajando para que veas los cambios en la página', key });
-        console.log(this.state)
         GetUser(this.state.id, this.state.usuario)
         .then(res => {
             this.props.actualizarUsuario(res.data);
             this.foto = this.state.foto;
-            message.success({ content: 'Tu información ha sido actualizada!', key, duration: 2 });
 
         }).catch(err =>{
             message.error({ content: 'Algo salió mal, intenta reiniciar la sesión', key, duration: 2 });
@@ -223,12 +193,7 @@ class Perfil extends React.Component {
     render(){
         return(
             <>
-                <Card title="Perfil" bordered={true} style={{ width: 900, height:"70%", }}
-                    actions={[
-                    <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' onClick={this.sendUserChange}>
-                        Guardar
-                    </Button>
-                ]}>
+                <Card title="Perfil" bordered={true} style={{ width: 900, height:"100%", }}>
                     <Space direction="vertical" style={{width:"25%", textAlign:"left"}}>
                         <this.avatarController />
                         <Upload
@@ -241,36 +206,42 @@ class Perfil extends React.Component {
                         </Upload>
                     </Space>
                     <Space direction="vertical" style={{width:"70%", textAlign:"left"}}>
-                        <Input required allowClear name="nombre" placeholder="Nombre" size="large" defaultValue={this.usuario.nombre} onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                        <Input required allowClear name="apellido" placeholder="Apellido" size="large" defaultValue={this.usuario.apellido} onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                        <Input required allowClear name="usuario" placeholder="Usuario" size="large" defaultValue={this.usuario.usuario} onChange={this.handleChangeText} prefix={<UserOutlined />}
-                        readOnly={this.props.sesion===2 ? true : false} />
-                        <Input required allowClear name="email" placeholder="Correo electrónico" defaultValue={this.usuario.email} size="large" onChange={this.handleChangeText} prefix={<this.email />} />
-                        <Button type="primary" icon={<LockOutlined />} onClick={this.showModal} block>
-                            Cambiar aspectos de seguridad
-                        </Button>
-                        <Modal
-                            title="Actualizar parámetros de seguridad"
-                            visible={this.state.visible}
-                            onOk={this.handleOk}
-                            onCancel={this.handleCancel}
-                        >
-                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                                <Select required defaultValue={this.usuario.pregunta} style={{ width: "100%" }} onChange={this.handleChangeSelect}>
-                                <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
-                                    <Option value="¿Por quien te dejó tu ex?">¿Por quien te dejó tu ex?</Option>
-                                    <Option value="¿Por qué ella no te ama?">¿Por qué ella no te ama?</Option>
-                                    <Option value="¿Por qué eres un fracasado?">¿Por qué eres un fracasado?</Option>
+                        <Form onFinish={this.sendUserChange}>
+                            <Form.Item name="nombre" initialValue={this.usuario.nombre}> 
+                                <Input required allowClear placeholder="Nombre" size="large" prefix={<UserOutlined />} />
+                            </Form.Item>
+                            <Form.Item name="apellido" initialValue={this.usuario.apellido}>
+                                <Input required allowClear  placeholder="Apellido" size="large" prefix={<UserOutlined />} />
+                            </Form.Item>
+                            <Form.Item name="usuario"  initialValue={this.usuario.usuario}>
+                                <Input required allowClear placeholder="Usuario" size="large" prefix={<UserOutlined />}
+                                readOnly={this.props.sesion===2 ? true : false} />
+                            </Form.Item>
+                            <Form.Item name="email" initialValue={this.usuario.email}>
+                                <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
+                            </Form.Item>
+                            <Form.Item name="pregunta" initialValue={this.usuario.pregunta}>
+                                <Select required>
+                                    <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
+                                    <Option value="¿Cuál es tu trabajo soñado?">¿Cuál es tu trabajo soñado?</Option>
+                                    <Option value="¿Cuál es tu personaje favorito?">¿Cuál es tu personaje favorito?</Option>
+                                    <Option value="¿Quién es tu actor favorito?">¿Quién es tu actor favorito?</Option>
                                 </Select>
-                                <Input allowClear name="respuesta" defaultValue={this.usuario.respuesta} placeholder="Respuesta" size="large" onChange={this.handleChangeText} prefix={<UnlockOutlined />} />
+                            </Form.Item>
+                            <Form.Item name="respuesta" initialValue={this.usuario.respuesta}>
+                                <Input allowClear placeholder="Respuesta" size="large" prefix={<UnlockOutlined />} />
+                            </Form.Item>
+                            <Form.Item name="contraseña">
                                 <Input.Password
                                     size="large"
-                                    placeholder="Ingrese su nueva contraseña"
                                     name="contraseña"
+                                    placeholder="Ingrese su nueva contraseña"
                                     onChange={this.handleChangeText}
                                     iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                                     prefix={<this.checkPwd />}
                                 />
+                            </Form.Item>
+                            <Form.Item name="confirmacion">
                                 <Input.Password
                                     size="large"
                                     onChange={this.handleChangeText}
@@ -279,8 +250,14 @@ class Perfil extends React.Component {
                                     iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                                     prefix={<this.checkPwd />}
                                 />
-                            </Space>
-                        </Modal>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                                    Guardar
+                                </Button>
+                            </Form.Item>
+                            
+                        </Form>
                     </Space>
                 </Card>
             </>

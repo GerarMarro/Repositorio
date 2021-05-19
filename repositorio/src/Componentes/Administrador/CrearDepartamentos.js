@@ -104,13 +104,13 @@ class CrearDepartamentos extends React.Component {
                             required: false,
                         },
                     ]}
+                    initialValue="1"
                 >
                     <Select
                         disabled
                         placeholder="Selecciona tipo de departamento"
                         
                         allowClear
-                        defaultValue="1"
                     >
                         <Option value="1" >Escritura</Option>
                     </Select>

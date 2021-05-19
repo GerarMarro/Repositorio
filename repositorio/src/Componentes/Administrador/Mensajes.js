@@ -1,79 +1,35 @@
 import React from 'react';
-import { Comment, Form, Button, List, Input } from 'antd';
+import { Form, Button, Input, message, Select } from 'antd';
 import moment from 'moment';
 import '../../../src/App.css';
-import fondo from '../../images/fondo.jpg'
 
-const { TextArea } = Input;
+//const { TextArea } = Input;
 
-const CommentList = ({ comments }) => (
-    
-    <List
-        dataSource={comments}
-        itemLayout="horizontal"
-        renderItem={props => 
-            <>
-                <Comment {...props} style={
-                    {
-                        borderRadius:"20px", 
-                        width:"50%", 
-                        color:"white", 
-                        backgroundColor:"#287EFF", 
-                        marginTop:"5px",
-                    }
-                } />
-            </>
-        }
-    />
+const { Option } = Select;
 
-);
+const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 0 },
+};
 
-const Editor = ({ onChange, onSubmit, submitting, value }) => (
-    <>
-        <Form.Item>
-            <TextArea rows={4} onChange={onChange} autoSize={false} value={value} />
-        </Form.Item>
-        <Form.Item>
-            <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
-                Enviar
-        </Button>
-        </Form.Item>
-    </>
-);
-
+const validateMessages = {
+    required: 'El campo ${name} es requerido',
+};
+const onFinish = (values) => {
+    message.loading("Creando empresa")
+    var datos ={
+        empresa: values.organizacion,
+        lectura: values.lectura,
+        escritura: values.escritura,
+        admin: localStorage.getItem('id')
+    }
+   
+};
 class Mensajes extends React.Component {
     state = {
         comments: [],
         submitting: false,
         value: '',
-    };
-
-    handleSubmit = () => {
-        if (!this.state.value) {
-            return;
-        }
-
-        this.setState({
-            submitting: true,
-        });
-
-        setTimeout(() => {
-            this.setState({
-                submitting: false,
-                value: '',
-                comments: [
-                    ...this.state.comments,
-                    {
-                        author: <p style={{color:"white"}}><strong>Han Solo</strong></p>,
-                        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                        content: <p>{this.state.value}</p>,
-                        datetime: <p style={{color:"white"}}>{moment().fromNow()}</p>,
-                    },
-                ],
-            });
-            var div = document.getElementsByClassName('mensajes')[0];
-            div.scrollTop = div.scrollHeight;
-        }, 100);
     };
 
     handleChange = e => {
@@ -83,22 +39,42 @@ class Mensajes extends React.Component {
     };
 
     render() {
-        const { comments, submitting, value } = this.state;
 
         return (
             <>
-                <div className="mensajes" style={{backgroundImage: `url(${fondo})`, marginBottom:"10px"}}>
-                    
-                    {comments.length > 0 && <CommentList comments={comments} />}
-                    <br />
-                    <Comment />
-                </div>
-                <Editor
-                    onChange={this.handleChange}
-                    onSubmit={this.handleSubmit}
-                    submitting={submitting}
-                    value={value}
-                />
+                <Form {...layout} name="nest-messages" onFinish={onFinish} initialValues validateMessages={validateMessages}>
+                    <Form.Item name="para" rules={[{ required: true }]}>
+                        <Select
+                            placeholder="Para"
+                            allowClear
+                        >
+                            <Option value="male">male</Option>
+                            <Option value="female">female</Option>
+                            <Option value="other">other</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="cc" rules={[{ required: true }]}>
+                        <Select
+                            placeholder="CC"
+                            allowClear
+                        >
+                            <Option value="male">male</Option>
+                            <Option value="female">female</Option>
+                            <Option value="other">other</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="Asunto" rules={[{ required: true }]}>
+                        <Input placeholder="Asunto" pattern="/^[A-Za-z0-9\s]+$/g" />
+                    </Form.Item>
+                    <Form.Item name="Mensaje">
+                        <Input.TextArea placeholder="Mensaje" rows={4} />
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                        <Button type="primary" htmlType="submit">
+                            Enviar
+                        </Button>
+                    </Form.Item>
+                </Form>
             </>
         );
     }

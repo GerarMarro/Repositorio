@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Col, Row, Select } from 'antd';
+import { Card, Col, Row } from 'antd';
 import CrearOrganizacion from './CrearOrganizacion'
 import CrearDepartamentos from './CrearDepartamentos'
 import Notificaciones from '../../Notificaciones';
@@ -7,32 +7,14 @@ import VerOrganizacion from './VerOrganizacion'
 import Mensajes from './Mensajes';
 import { AllUsers } from '../../Datos/requests';
 
-const { Option } = Select;
 
 class Dashboard extends React.Component {
     state = {
         usuarios: []
     }
-    /** Sacar usuarios de la api */
-    componentDidMount(){       
-        AllUsers(this.props.admin._id)
-        .then(res =>{
-            this.setState({
-                usuarios: res.data
-            }, () =>{
-                console.log(this.state);
-            })
-        })
-        .catch(err =>{
-            console.log(err);
-        })
-    }
 
     /**Eventos de controles */
     
-    onChange = (value) =>{
-        console.log(value);
-    }
 
     render(){
         return(
@@ -70,24 +52,8 @@ class Dashboard extends React.Component {
                             <Card 
                                 title="Mensajes" 
                                 style={{height:"100%"}} 
-                                bordered={true}
-                                extra={
-                                    <Select
-                                        showSearch
-                                        style={{ width: 300 }}
-                                        placeholder="Selecciona el usuario para enviar correo"
-                                        optionFilterProp="children"
-                                        onChange={this.onChange}
-                                        filterOption={(input, option) =>
-                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                    >
-                                        { this.state.usuarios.map((u, index) =>
-                                            <Option value={u.id} key={index}>{u.username}</Option>
-                                        ) }
-                                    </Select>
-                                }
-                                >
+                                bordered={true}    
+                            >
                                 <Mensajes />
                             </Card>
                         </Col>

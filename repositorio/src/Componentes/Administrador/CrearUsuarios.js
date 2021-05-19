@@ -41,6 +41,7 @@ class CrearUsuarios extends React.Component {
         this.handleChangeText = this.handleChangeText.bind(this);
     }
 
+    foto = 0;
     usuario = this.props.info;
     empresa = "";
     activarDep = true;
@@ -84,7 +85,8 @@ class CrearUsuarios extends React.Component {
 
         var file = info.fileList[0];
         if(this.VerificateImg(file)){
-            this.setState({ foto: file });
+            this.foto = file;
+            this.setState({ foto : file }, ()=>{ });
         }
     };
 
@@ -127,7 +129,7 @@ class CrearUsuarios extends React.Component {
                 foto: 0,
                 tipo: this.state.departamentos.find(x=>x._id === this.state.departamento).tipo}, ()=>{
                     Usuario = {
-                        foto: this.state.foto,
+                        foto: this.foto,
                         admin: this.state.admin,
                         nombre: this.state.nombre,
                         apellido: this.state.apellido,
@@ -139,6 +141,7 @@ class CrearUsuarios extends React.Component {
                         departamento: this.state.departamento,
                         tipo: this.state.tipo
                     }
+                    console.log(Usuario)
                 }
             )
             confirm({
@@ -146,6 +149,7 @@ class CrearUsuarios extends React.Component {
               content: '',
               onOk() {
                 message.loading({ content: 'Agregando un nuevo miembro al equipo...', key });
+                //console.log(this1.state);
                 
                 RegUser(Usuario).then(res =>{
                     message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
