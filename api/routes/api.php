@@ -28,3 +28,4 @@ Route::get('allusers/{id}', 'App\Http\Controllers\AdministradoresController@AllU
 Route::get('allempresas', 'App\Http\Controllers\AdministradoresController@AllEmpresas');
 Route::get('datos/{id}/{departamento}', 'App\Http\Controllers\UsuariosController@ObtenerDatos');
 Route::get('actualizardatos', 'App\Http\Controllers\UsuariosController@ActualizarDatos');
+Route::get('correo', 'App\Http\Controllers\AdministradoresController@EnviarCorreo');

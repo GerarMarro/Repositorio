@@ -8,7 +8,8 @@ import {registrar, getPregunta,
         todosdepartamentos, crearempresa,
         empresasxadmin, creardepartamento,
         organizacion, allusers,
-        datos, actualizardatos } from './rutas';
+        datos, actualizardatos,
+        correo } from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -181,6 +182,19 @@ function sobreDatos(datos) {
     });
 }
 
+function EnviarCorreo(datos) {
+    return axios.get(correo, {
+        params:{
+            de: datos.de,
+            para: datos.para,
+            cc: datos.cc,
+            cco: datos.cco,
+            asunto: datos.asunto,
+            mensaje: datos.mensaje
+        }
+    });
+}
+
 export {
     Registrar,
     GetPregunta,
@@ -201,5 +215,6 @@ export {
     Organizacion,
     AllUsers,
     TodosDatos,
-    sobreDatos
+    sobreDatos,
+    EnviarCorreo
 };

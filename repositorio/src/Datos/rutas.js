@@ -19,6 +19,7 @@ var organizacion = ApiRoot + "organizacion/";
 var allusers = ApiRoot + "allusers/";
 var datos = ApiRoot + "datos/";
 var actualizardatos = ApiRoot + "actualizardatos";
+var correo = ApiRoot + "correo";
 
 export default ApiRoot;
 export {
@@ -41,5 +42,6 @@ export {
     organizacion,
     allusers,
     datos,
-    actualizardatos
+    actualizardatos,
+    correo
 };

@@ -1,6 +1,6 @@
 import '../App.css';
 import '.././Componentes/Styles/Auth.css';
-import { Layout, Menu, Typography, Avatar, Popover, Badge, message } from 'antd';
+import { Layout, Menu, Typography, Avatar, Popover, Badge, message, Skeleton } from 'antd';
 import { ContactsOutlined, TeamOutlined, BankOutlined,
   ReadOutlined, UploadOutlined, UserOutlined, UserAddOutlined, 
   UnlockOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
@@ -40,12 +40,15 @@ class MainLayout extends React.Component {
       GetUser(oldId, old).then(res =>{
         console.log(res.data)
         this.Logueado(res.data);
+        setTimeout(this.setState({isLoading:false}), 20000)
       }).catch(err =>{
         console.log(err);
       });
       
     }else{
       message.success({ content: 'Ninguna sesión encontrada', key });
+      setTimeout(this.setState({isLoading:false}), 20000000)
+      
     }
   }
 
@@ -59,7 +62,8 @@ class MainLayout extends React.Component {
     color: "",
     menu: '1',
     empresa: "",
-    notificaciones: []
+    notificaciones: [],
+    isLoading: true
   };
 
   toggle = () => {
@@ -80,7 +84,12 @@ class MainLayout extends React.Component {
           menu: ''
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
-          localStorage.setItem("id", this.state.usuario._id);
+          if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
+            localStorage.setItem("id", this.state.usuario.admin);  
+          }else{
+            localStorage.setItem("id", this.state.usuario._id);  
+          }
+          localStorage.setItem("idUser", this.state.usuario._id);  
         });  
       }else{
         this.setState({
@@ -91,7 +100,12 @@ class MainLayout extends React.Component {
           menu: oldSession.menu
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
-          localStorage.setItem("id", this.state.usuario._id);
+          if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
+            localStorage.setItem("id", this.state.usuario.admin);  
+          }else{
+            localStorage.setItem("id", this.state.usuario._id);  
+          }
+          localStorage.setItem("idUser", this.state.usuario._id);  
         });  
       }
       GetNotificaciones(this.state.usuario._id).then(res =>{
@@ -110,7 +124,12 @@ class MainLayout extends React.Component {
           menu: ''
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
-          localStorage.setItem("id", this.state.usuario._id);
+          if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
+            localStorage.setItem("id", this.state.usuario.admin);  
+          }else{
+            localStorage.setItem("id", this.state.usuario._id);  
+          }
+          localStorage.setItem("idUser", this.state.usuario._id);  
         });
       }else{
         this.setState({
@@ -121,7 +140,12 @@ class MainLayout extends React.Component {
           menu: oldSession.menu
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
-          localStorage.setItem("id", this.state.usuario._id);
+          if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
+            localStorage.setItem("id", this.state.usuario._id);  
+          }else{
+            localStorage.setItem("id", this.state.usuario.admin);  
+          }
+          localStorage.setItem("idUser", this.state.usuario._id);  
         });
       }  
       GetNotificaciones(this.state.usuario._id).then(res =>{
@@ -170,7 +194,7 @@ class MainLayout extends React.Component {
         return(
         <>
           <Content
-               className="App"
+                className="App"
             >
               <Password />
               
@@ -184,7 +208,7 @@ class MainLayout extends React.Component {
         return(
           <>
             <Content
-                 className="App"
+                  className="App"
               >
                 <Welcome usuarioNombre={this.state.usuario.nombre} />
                 
@@ -257,7 +281,6 @@ class MainLayout extends React.Component {
 
     }
 
-    
   }
 
 
@@ -468,7 +491,7 @@ class MainLayout extends React.Component {
         </Sider>
         <Layout className="main">
           <this.HeaderPage />
-          <this.controllerContentInicio />
+          { this.state.isLoading ? <Skeleton avatar /> : <this.controllerContentInicio />}
         </Layout>
       </Layout>
     );

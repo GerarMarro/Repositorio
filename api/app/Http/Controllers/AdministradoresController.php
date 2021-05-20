@@ -9,8 +9,10 @@ use App\Models\Empresas;
 use App\Models\Usuarios;
 use App\Models\Departamentos;
 use App\Mail\RestauracionContraseña; 
+use App\Mail\Correo; 
 use App\Models\Logs; 
-use App\Models\Datos; 
+use App\Models\Datos;
+use App\Models\CorreoMail;  
 
 class AdministradoresController extends Controller
 {
@@ -499,17 +501,53 @@ class AdministradoresController extends Controller
         }else{
             $usuarios = $admin->usuarios;
             $respuesta = [];
+            $adminis = [
+                'id' => $admin->_id,
+                'usuario' => $admin->usuario,
+                'correo' => $admin->email,
+                'admin' => true
+            ];
+            array_push($respuesta, $adminis);
             foreach ($usuarios as $u) {
                 $usuario = [
                     'id' => $u->_id,
-                    'username' => $u->usuario,
-                    
+                    'usuario' => $u->usuario,
+                    'correo' => $u->email,
+                    'admin' => false
                 ];
                 array_push($respuesta, $usuario);
             }
             return response($respuesta, 200);
         }
     }
+    
+    public function EnviarCorreo(Request $request){
+        $usuario = Administradores::where('_id', '=', $request->de)->first();
+        if ($usuario == null) {
+            $usuario = Usuarios::where('_id', '=', $request->de)->first();
+        }
+        //return $request;
+        if ($request->cc == null && $request->cco == null) {
+            Mail::to([$request->para])
+                ->send(new Correo($request->mensaje, $usuario->usuario, $request->asunto));
+        }else if ($request->cc != null && $request->cco == null) {
+            Mail::to([$request->para])
+              ->cc($request->cc)
+              ->send(new Correo($request->mensaje, $usuario->usuario, $request->asunto));
+        }else if ($request->cc == null && $request->cco != null) {
+            Mail::to([$request->para])
+              ->bcc($request->cco)
+              ->send(new Correo($request->mensaje, $usuario->usuario, $request->asunto));
+        }else{
+            Mail::to([$request->para])
+                  ->cc($request->cc)
+                  ->bcc($request->cco)
+                  ->send(new Correo($request->mensaje, $usuario->usuario, $request->asunto));
+        }
+        
+        return $request;
+    }
+    
      
 }
 
