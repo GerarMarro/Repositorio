@@ -1,9 +1,10 @@
 import React from 'react';
 import '../Styles/Auth.css';
 import 'material-icons';
-import { Input, Space, Card, Button, Upload, Select, message, Typography, Tree, Result } from 'antd';
+import { Input, Space, Card, Button, Upload, Select, message, Typography, Tree, Result, Form } from 'antd';
 import { UserOutlined, EyeInvisibleOutlined, EyeTwoTone,UploadOutlined,UserAddOutlined, LockOutlined, DownOutlined  } from '@ant-design/icons';
 import {Registrar} from '../../Datos/requests';
+import { datos } from '../../Datos/rutas';
 
 const { Option } = Select;
 const { TreeNode } = Tree;
@@ -60,7 +61,7 @@ class Register extends React.Component {
         var file = info.fileList[0];
         if(this.VerificateImg(file)){
             this.setState({ foto: file }, ()=>{
-                console.log(this.state.foto);
+                //console.log(this.state.foto);
             });
         }
     };
@@ -77,93 +78,80 @@ class Register extends React.Component {
             return false;   
         }
     };
-
-    handleSubmit = event => {
-        event.preventDefault();
-
-        if (this.Camposvacios()) {
-            
-            message.error('Asegurate de que no hayan campos vacíos');
-
-        }else if (this.state.confirmacion !== this.state.contraseña) {
+    datos = {};
+    handleSubmit = values => {
+        if (values.confirmacion !== values.contraseña) {
             
             message.error('Asegurate de que ambas contraseñas coincidan');
             
-        }else if(this.state.usuario.includes("@") && this.state.usuario.includes("/") && this.state.usuario.includes("\\")){
-            message.error('Asegurate de que no hayan caracteres especiales como @, / o \\');
         }else{
 
             message.loading({ content: 'Estamos creando tu usuario', key });
-
             if (this.state.foto !== null) {
-                
-                
-                Registrar(this.state)
-                .then(res => {
-                    if (res.data === 1001) {
-                        
-                        message.warning({ content: 'El nombre de usuario ya esta en uso.!', key, duration: 2 });
-                        
-                    }else if(res.data === 1002){
-
-                        message.warning({ content: 'El nombre de la empresa ya esta en uso.!', key, duration: 2 });
-
-                    }else{
-                        
-                        message.success({ content: 'El usuario fue creado exitosamente!', key, duration: 2 });
-                        this.setState({
-                            estado: 1
-                        });
-                    }
-                })
-                .catch(err => {
-                    
-                    console.log("err", err);
-                    message.error({ content: 'Algo salió mal', key, duration: 2 });
-
-                });
+                this.datos={
+                    foto: this.state.foto,
+                    nombre: values.nombre,
+                    apellido: values.apellido,
+                    usuario: values.usuario,
+                    contraseña: values.contraseña,
+                    email: values.email,
+                    pregunta: values.pregunta,
+                    respuesta: values.respuesta,
+                    empresa: values.empresa,
+                    lectura: values.lectura,
+                    escritura: values.escritura
+                }
 
             }else{
-
-                Registrar(this.state)
-                .then(res => {
-                    if (res.data === 1001) {
-
-                        message.warning({ content: 'El nombre de usuario ya esta en uso.!', key, duration: 2 });
-                        
-                    }else if(res.data === 1002){
-
-                        message.warning({ content: 'El nombre de la empresa ya esta en uso.!', key, duration: 2 });
-
-                    }else{
-                        
-                        message.success({ content: 'El usuario fue creado exitosamente!', key, duration: 2 });
-                        this.setState({
-                            estado: 1
-                        });
-                    }
-
-                })
-                .catch(err => {
-
-                    console.log("err", err);
-                    message.error({ content: 'Algo salió mal', key, duration: 2 });
-
-                });
+                this.datos={
+                    foto: 0,
+                    nombre: values.nombre,
+                    apellido: values.apellido,
+                    usuario: values.usuario,
+                    contraseña: values.contraseña,
+                    email: values.email,
+                    pregunta: values.pregunta,
+                    respuesta: values.respuesta,
+                    empresa: values.empresa,
+                    lectura: values.lectura,
+                    escritura: values.escritura
+                }
+                
             }
-            
+            Registrar(this.datos)
+            .then(res => {
+                if (res.data === 1001) {
+
+                    message.warning({ content: 'El nombre de usuario ya esta en uso.!', key, duration: 2 });
+                    
+                }else if(res.data === 1002){
+
+                    message.warning({ content: 'El nombre de la empresa ya esta en uso.!', key, duration: 2 });
+
+                }else{
+                    
+                    message.success({ content: 'El usuario fue creado exitosamente!', key, duration: 2 });
+                    this.setState({
+                        estado: 1
+                    });
+                }
+
+            })
+            .catch(err => {
+
+                console.log("err", err);
+                message.error({ content: 'Algo salió mal', key, duration: 2 });
+
+            });
+        
         }
         
     };
 
-    handleChangeSelect = value => {
-        this.setState({ pregunta: value });
-    }
-
     handleChangeText(event) {
         this.setState({ 
             [event.target.name]: event.target.value
-        }, ()=>{console.log(this.state)});
+        }, ()=>{});
     }
 
     checkPwd = () =>{
@@ -181,6 +169,7 @@ class Register extends React.Component {
             );
         }
     }
+
     email = () =>{
         return (
             <span className="material-icons-outlined">
@@ -237,87 +226,198 @@ class Register extends React.Component {
     MainView = () =>{
         return (
             <div className="site-card-border-less-wrapper" >
-                <Card title="Registrar" bordered={true} style={{ width: 1000 }}
-                actions={[
-                    <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' onClick={this.handleSubmit}>
-                        Registrar
-                    </Button>
-                    ]}>
-                    <Card.Grid style={{width:"50%", height:"100%"}}>
-                        <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                            <Upload
-                                listType="picture"
-                                onPreview={this.handlePreview}
-                                onChange={this.handleUpload}
-                                maxCount={1}
-                                beforeUpload={() => false}
-                            >
-                                <Button icon={<UploadOutlined />}>Subir imagen (Max: 1)</Button>
-                            </Upload>
-                            <Input required allowClear name="nombre" placeholder="Nombre" size="large" onChange={this.handleChangeText}  prefix={<UserOutlined />} />
-                            <Input required allowClear name="apellido" placeholder="Apellido" size="large" onChange={this.handleChangeText} prefix={<UserOutlined />} />
-                            <Input required allowClear name="usuario" placeholder="Usuario" size="large" onChange={this.handleChangeText} prefix={<UserOutlined />} />
-                            <Input required allowClear name="email" placeholder="Correo electrónico" size="large" onChange={this.handleChangeText} prefix={<this.email />} />
-                            <Select required defaultValue="[Seleccione pregunta]" style={{ width: "100%" }} onChange={this.handleChangeSelect}>
-                            <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
-                                <Option value="¿Por quien te dejó tu ex?">¿Por quien te dejó tu ex?</Option>
-                                <Option value="¿Por qué ella no te ama?">¿Por qué ella no te ama?</Option>
-                                <Option value="¿Por qué eres un fracasado?">¿Por qué eres un fracasado?</Option>
-                            </Select>
-                            <Input allowClear name="respuesta" placeholder="Respuesta" size="large" onChange={this.handleChangeText} prefix={<LockOutlined />} />
-                            <Input.Password
-                                size="large"
-                                placeholder="Ingrese contraseña"
-                                name="contraseña"
-                                onChange={this.handleChangeText}
-                                iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                                prefix={<this.checkPwd />}
-                            />
-                            <Input.Password
-                                size="large"
-                                onChange={this.handleChangeText}
-                                name="confirmacion"
-                                placeholder="Repita su contraseña"
-                                iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                                prefix={<this.checkPwd />}
-                            />
-                            
-                        </Space>
-                    </Card.Grid>
-                    <Card.Grid style={{width:"50%", height:"100%"}}>
-                        <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                            
-                            <Input required allowClear name="empresa" placeholder="Nombre de Empresa" size="large" onChange={this.handleChangeText}  prefix={<this.empresa />} />
-                            <Input required allowClear name="lectura" placeholder="Nombre de departamento de lectura" size="large" onChange={this.handleChangeText} prefix={<this.lectura />} />
-                            <Input required allowClear name="escritura" placeholder="Nombre de departamento de escritura" size="large" onChange={this.handleChangeText} prefix={<this.escritura />} />
-                            
-                        </Space>
-                    </Card.Grid>
-                    <Card.Grid style={{width:"50%", height:"100%"}}>
-                        <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                            
-                            <Paragraph strong style={{fontSize:29.5}}> 
-                                Vista previa
-                            </Paragraph>
-
-                            <Tree
-                                showLine
-                                switcherIcon={<DownOutlined />}
-                                defaultExpandedKeys={['0-0-0']}
+                <Form onFinish={this.handleSubmit}>
+                    <Card title="Registrar" bordered={true} style={{ width: 1000 }}
+                    actions={[
+                        <Form.Item>
+                            <Button type="primary" shape="round" icon={<UserAddOutlined />} size='large' htmlType="submit">
+                                Registrar
+                            </Button>
+                        </Form.Item>
+                        ]}>
+                        
+                        <Card.Grid style={{width:"50%", height:"100%"}}>
+                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
+                                <Upload
+                                    listType="picture"
+                                    onPreview={this.handlePreview}
+                                    onChange={this.handleUpload}
+                                    maxCount={1}
+                                    beforeUpload={() => false}
+                                >
+                                    <Button icon={<UploadOutlined />}>Subir imagen (Max: 1)</Button>
+                                </Upload>
+                                <Form.Item 
+                                    name="nombre"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input allowClear placeholder="Nombre" size="large"  prefix={<UserOutlined />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="apellido"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input required allowClear placeholder="Apellido" size="large" prefix={<UserOutlined />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="usuario"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input required allowClear placeholder="Usuario" size="large" prefix={<UserOutlined />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="email"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="pregunta"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Select required defaultValue="[Seleccione pregunta]" style={{ width: "100%" }}>
+                                        <Option value="¿Cuál es tu superheroe favorito?" key="1">¿Cuál es tu superheroe favorito?</Option>
+                                        <Option value="¿Cuál es tu trabajo soñado?" key="2">¿Cuál es tu trabajo soñado?</Option>
+                                        <Option value="¿Cuál es tu personaje favorito?" key="3">¿Cuál es tu personaje favorito?</Option>
+                                        <Option value="¿Quién es tu actor favorito?" key="4">¿Quién es tu actor favorito?</Option>
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item 
+                                    name="respuesta"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input allowClear placeholder="Respuesta" size="large" prefix={<LockOutlined />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="contraseña"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password
+                                        size="large"
+                                        name="contraseña"
+                                        placeholder="Ingrese contraseña"
+                                        onChange={this.handleChangeText}
+                                        iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                        prefix={<this.checkPwd />}
+                                    />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="confirmacion"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password
+                                        size="large"
+                                        name="confirmacion"
+                                        onChange={this.handleChangeText}
+                                        placeholder="Repita su contraseña"
+                                        iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                        prefix={<this.checkPwd />}
+                                    />
+                                </Form.Item>
+                            </Space>
+                        </Card.Grid>
+                        <Card.Grid style={{width:"50%", height:"100%"}}>
+                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
+                                <Form.Item 
+                                    name="empresa"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input allowClear name="empresa" onChange={this.handleChangeText} placeholder="Nombre de Empresa" size="large" prefix={<this.empresa />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="lectura"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input allowClear name="lectura" onChange={this.handleChangeText} placeholder="Nombre de departamento de lectura" size="large" prefix={<this.lectura />} />
+                                </Form.Item>
+                                <Form.Item 
+                                    name="escritura"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Este campo es requerido"
+                                        },
+                                    ]}
+                                >
+                                    <Input allowClear name="escritura" placeholder="Nombre de departamento de escritura" onChange={this.handleChangeText} size="large" prefix={<this.escritura />} />
+                                </Form.Item>
+                            </Space>
+                        </Card.Grid>
+                        <Card.Grid style={{width:"50%", height:"100%"}}>
+                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
                                 
-                            >
-                                <TreeNode title={this.state.empresa !== "" ? this.state.empresa : '<Tu empresa aquí>'} key="0-0">
-                                <TreeNode title={this.state.lectura !== "" ? this.state.lectura : '<Departamento de lectura>'} key="0-0-0">
-                                    <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "<nombre>@" + this.state.empresa   : '<Nombre de usuario>@<empresa>'} key="0-0-0-0" />
-                                </TreeNode>
-                                <TreeNode title={this.state.escritura !== "" ? this.state.escritura : '<Departamento de escritura>'} key="0-0-1">
-                                    <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "<nombre>@" + this.state.empresa : '<Nombre de usuario>@<empresa>'} key="0-0-1-0" /></TreeNode>
-                                </TreeNode> 
-                            </Tree>
-                        </Space> 
-                    </Card.Grid>
-                </Card>
-                
+                                <Paragraph strong style={{fontSize:29.5}}> 
+                                    Vista previa
+                                </Paragraph>
+
+                                <Tree
+                                    showLine
+                                    switcherIcon={<DownOutlined />}
+                                    defaultExpandedKeys={['0-0-0', '0-0-1']}
+                                    
+                                >
+                                    <TreeNode title={this.state.empresa !== "" ? this.state.empresa : '[Tu empresa aquí]'} key="0-0">
+                                    <TreeNode title={this.state.lectura !== "" ? this.state.lectura : '[Departamento de lectura]'} key="0-0-0">
+                                        <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa   : '<Nombre de usuario>@<empresa>'} key="0-0-0-0" />
+                                    </TreeNode>
+                                    <TreeNode title={this.state.escritura !== "" ? this.state.escritura : '<Departamento de escritura>'} key="0-0-1">
+                                        <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa : '<Nombre de usuario>@<empresa>'} key="0-0-1-0" /></TreeNode>
+                                    </TreeNode> 
+                                </Tree>
+                            </Space> 
+                        </Card.Grid>
+                    </Card>
+                </Form>
             </div>
         );
     }

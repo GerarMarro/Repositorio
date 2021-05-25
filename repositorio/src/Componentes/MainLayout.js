@@ -38,11 +38,11 @@ class MainLayout extends React.Component {
       message.success({ content: 'Hay una sesión encontrada', key });
       var oldId = localStorage.getItem("id");
       GetUser(oldId, old).then(res =>{
-        console.log(res.data)
+        //console.log(res.data)
         this.Logueado(res.data);
         setTimeout(this.setState({isLoading:false}), 20000)
       }).catch(err =>{
-        console.log(err);
+        //console.log(err);
       });
       
     }else{
@@ -380,7 +380,7 @@ class MainLayout extends React.Component {
 
       )
     }else if (this.state.session === 2) {
-      console.log(this.state)
+      //console.log(this.state)
       return (
         <Menu theme="dark" mode="inline" defaultSelectedKeys={[this.state.menu]}>
           

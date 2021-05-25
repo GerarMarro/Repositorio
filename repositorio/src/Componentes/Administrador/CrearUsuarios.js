@@ -145,7 +145,7 @@ class CrearUsuarios extends React.Component {
                   
                   RegUser(Usuario).then(res =>{
                       message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
-                      console.log("res", res.data);
+                      //console.log("res", res.data);
                       if (res.data === 1) {
                         message.error({ content: 'El usuario ya esta en uso', key });
                       }else if (res.data === 2) {

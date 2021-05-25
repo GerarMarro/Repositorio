@@ -38,10 +38,8 @@ class Notificaciones extends React.Component {
                         <List
                             dataSource={this.state.data}
                             size="small"
+                            
                             pagination={{
-                                onChange: page => {
-                                  console.log(page);
-                                },
                                 pageSize: 3,
                             }}
                             renderItem={item => (

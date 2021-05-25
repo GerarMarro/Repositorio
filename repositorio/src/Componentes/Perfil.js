@@ -8,8 +8,7 @@ import {
     Input, Space, Card, 
     Button, Upload, Select, 
     message, Typography,
-    Avatar, Modal,
-    Form
+    Avatar, Form
 } from 'antd';
 import 'material-icons';
 import {ActualizarUsuario, GetUser} from '../Datos/requests';

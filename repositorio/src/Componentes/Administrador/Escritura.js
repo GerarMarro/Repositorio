@@ -132,7 +132,7 @@ class Escritura extends React.Component {
           tipo: this.state.tipo,
           datos: this.state.data,
         }
-        console.log(data)
+        //console.log(data)
         sobreDatos(data)
         .then(res =>{
           message.success("Sus datos se han actualizado");

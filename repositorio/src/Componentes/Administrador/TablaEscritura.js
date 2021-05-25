@@ -109,7 +109,7 @@ class TablaEscritura extends React.Component {
             visible: true,
             dato: JSON.parse(e.target.name)
 
-        }, () => {console.log(this.state.dato) } 
+        }, () => {/*console.log(this.state.dato) */} 
     )}
 
     render() {

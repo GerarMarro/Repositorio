@@ -14,15 +14,12 @@ class VerDatos extends React.Component {
         headers: []
     }
 
-    callback = (key) => {
-        console.log(key);
-    }
 
 
     crearTabla = () =>{
         //console.log(arreglo[0].hoja)
         if (this.props.data[0].hoja === undefined) {
-            console.log(this.props.data);
+            //console.log(this.props.data);
             return (
                 <>
                     <Card>
@@ -35,7 +32,7 @@ class VerDatos extends React.Component {
             return (
                 <>
                     <Card style={{height:"100%"}}>
-                        <Collapse style={{height:"100%", width:"100%"}} defaultActiveKey="0" expandIconPosition="right" onChange={this.callback}>
+                        <Collapse style={{height:"100%", width:"100%"}} defaultActiveKey="0" expandIconPosition="right">
                             
                             {this.props.data.map((h, index)=>
                                 <Panel key={index} header={h.hoja} extra={<FileOutlined />}>

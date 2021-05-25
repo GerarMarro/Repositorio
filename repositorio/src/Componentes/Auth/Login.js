@@ -1,6 +1,6 @@
 import React from 'react';
 import '../Styles/Auth.css';
-import { Input, Space, Card, Button, message, Skeleton } from 'antd';
+import { Input, Space, Card, Button, message, Skeleton, Form } from 'antd';
 import { UserOutlined, EyeInvisibleOutlined, EyeTwoTone, LoginOutlined } from '@ant-design/icons';
 import {Ingresar} from '../../Datos/requests';
 
@@ -23,6 +23,7 @@ class Login extends React.Component {
         constraseña: "",
     }
     */
+
     changeInput = (event) =>{
         if (event.target.name === "usuario") {
          
@@ -35,11 +36,15 @@ class Login extends React.Component {
         }
     }
 
-    ingresar = (event) =>{
+    onFinishFailed = (errorInfo) => {
+        message.error("Error: ", errorInfo);
+    };
+
+    ingresar = (values) =>{
 
         this.setState({ isloading: true });
         message.loading({ content: 'Cargando...', key });
-        Ingresar(this.user, this.contraseña)
+        Ingresar(values.usuario, values.contraseña)
         .then(res => {
             if (res.data === 1003) {
 
@@ -55,16 +60,16 @@ class Login extends React.Component {
                 message.success({ content: 'Bienvenido ' + dataUser.nombre + '!', key, duration: 2 });
                 
                 this.props.Logueado(dataUser);
-                this.setState({ isloading: false });
                 return ;
             }
             
         })
         .catch(err => {
             console.log("err", err);
+            this.setState({ isloading: false });
             message.error({ content: 'Algo salió mal', key, duration: 2 });
         });
-
+        this.setState({ isloading: false });
     }
 
     render(){
@@ -75,17 +80,56 @@ class Login extends React.Component {
                         <Card title="Ingresar" bordered={true} style={{ width: 600 }}>
                             <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
                                 <UserOutlined style={{fontSize: 150}}/>
-                                <Input allowClear name="usuario" placeholder="Usuario" size="large" onChange={this.changeInput} prefix={<UserOutlined />} />
-                                <Input.Password
-                                    size="large"
-                                    name="contraseña"
-                                    placeholder="Contraseña"
-                                    onChange={this.changeInput}
-                                    iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                                />
-                                <Button type="primary" onClick={this.ingresar} shape="round" icon={<LoginOutlined />} size='large'>
-                                    Ingresar
-                                </Button>
+                                <Form
+                                    initialValues={{
+                                        remember: true
+                                    }}
+                                    onFinish={this.ingresar}
+                                    onFinishFailed={this.onFinishFailed}
+                                >
+                                    <Form.Item 
+                                        name="usuario"
+                                        rules={[
+                                            {
+                                                required:true,
+                                                message:"El campo usuario no puede ir vacío"
+                                            }
+                                        ]}    
+                                    >
+                                        <Input 
+                                            allowClear 
+                                            placeholder="Usuario" 
+                                            size="large"
+                                            prefix={<UserOutlined />} 
+                                        />
+                                    </Form.Item>
+                                    <Form.Item 
+                                        name="contraseña" 
+                                        rules={[{
+                                            required:true,
+                                            message: "El campo contraseña no puede ir vacío"
+                                        }]}
+                                    >
+                                        <Input.Password
+                                            allowClear
+                                            size="large"
+                                            placeholder="Contraseña"
+                                            iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                        />
+                                    </Form.Item>   
+                                    <Form.Item >
+                                        <Button 
+                                            type="primary" 
+                                            shape="round" 
+                                            htmlType="submit"
+                                            icon={<LoginOutlined />} size='large'
+                                        >
+                                            Ingresar
+                                        </Button>
+                                    </Form.Item>
+                                    
+                                   
+                                </Form>
                             </Space>
                         </Card>
                     </div>

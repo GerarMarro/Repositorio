@@ -3,7 +3,7 @@ import '../Styles/Auth.css';
 import 'material-icons';
 import {GetPregunta, ActualizarContra} from '../../Datos/requests';
 import { Input, Space, Card, Button, message, Result } from 'antd';
-import { UnlockOutlined, QuestionOutlined, RightCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { UnlockOutlined, QuestionOutlined, RightCircleOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 const key = 'updatable';
@@ -24,90 +24,68 @@ class Password extends React.Component {
         this.setState({ 
             [event.target.name]: event.target.value
         });
-    }
-
-    validarRespuesta = () =>{
-
-        if(this.state.respuesta === "" || this.state.respuestaInput === ""){
-            return (
-                <>
-                    <span className="material-icons-outlined" >
-                        lock
-                    </span>
-                </>
-            );
-        }else if (this.state.respuesta === this.state.respuestaInput) {
-            return (
-                <>
-                    <span className="material-icons-outlined" style={{color:"green"}}>
-                        lock_open
-                    </span>
-                </>
-            );
-        }else{
-            return (
-                <>
-                    <span className="material-icons-outlined" style={{color:"red"}}>
-                        lock
-                    </span>
-                </>
-            );
-        }
-    }
+    }  
 
     handleRequest = () =>{
 
-        message.loading({ content: 'Estamos buscando tu información', key });
+        if (this.state.usuario === "" && this.state.email === "") {
+            message.error("Se necesita del correo y del usuario para buscar su usuario");
+        }else{
+            message.loading({ content: 'Estamos buscando tu información', key });
+            GetPregunta(this.state)
+            .then(res => {
 
-        GetPregunta(this.state)
-        .then(res => {
+                if (res.data === 1003) {
 
-            if (res.data === 1003) {
+                    message.warning({ content: 'Usuario o correo no encontrado', key });
+                    
+                }else{
 
-                message.warning({ content: 'Usuario o correo no encontrado', key });
-                
-            }else{
+                    var dataUser = res.data;
+                    this.setState({ 
+                        pregunta: dataUser.pregunta,
+                        respuesta: dataUser.respuesta,
+                        id: dataUser._id,
+                        usuario: dataUser.usuario
+                    });
+                    message.success({ content: 'Contesta la pregunta de seguridad', key });
+                }
+            
+            })
+            .catch(err => {
+                console.log("err", err);
 
-                var dataUser = res.data;
-                this.setState({ 
-                    pregunta: dataUser.pregunta,
-                    respuesta: dataUser.respuesta,
-                    id: dataUser._id
-                });
-                message.success({ content: 'Contesta la pregunta de seguridad', key });
-            }
-           
-        })
-        .catch(err => {
-            console.log("err", err);
-
-            message.error({ content: 'Algo salió mal', key });
-        });
+                message.error({ content: 'Algo salió mal', key });
+            });
+        }
     }
     
     changePassword = () =>{
         
-        message.loading({ content: 'Tu contraseña estará lista en breve', key });
-
-        if(this.state.respuestaInput === this.state.respuesta){
-            var hoy = new Date();
-            var hora = String(hoy.getHours()) + String(hoy.getMinutes()) + String(hoy.getSeconds());
-            ActualizarContra(this.state, hora)
-            .then(res => {
-                this.setState({ 
-                    estado: 1
-                });
-                message.success({ content: 'Contraseña enviada a: ' + res.data.email, key, duration: 2 });
-            })
-            .catch(err => {
-                console.log("err", err);
-                message.error({ content: 'Algo salió mal ', key, duration: 2 });
-            });
-
+        if (this.state.respuestaInput === "") {
+            message.error("Por favor responder a la pregunta de seguridad");
+            //console.log(this.state);
         }else{
-            message.error("Su respuesta no coincide con la archivada");
+            if(this.state.respuestaInput === this.state.respuesta){
+                message.loading({ content: 'Tu contraseña estará lista en breve', key });
+                var hoy = new Date();
+                var hora = String(hoy.getHours()) + String(hoy.getMinutes()) + String(hoy.getSeconds());
+                ActualizarContra(this.state, hora)
+                .then(res => {
+                    this.setState({ 
+                        estado: 1
+                    });
+                    message.success({ content: 'Contraseña enviada a: ' + res.data.email, key, duration: 2 });
+                })
+                .catch(err => {
+                    console.log("err", err);
+                    message.error({ content: 'Algo salió mal ', key, duration: 2 });
+                });
+    
+            }else{
+                message.error("Su respuesta no coincide con la archivada");
+            }
         }
-        
     }
 
     email = () =>{
@@ -142,13 +120,29 @@ class Password extends React.Component {
     MainView = () =>{
         return (
             <div className="site-card-border-less-wrapper" >
-                <Card title="Ingresar" bordered={true} style={{ width: 600 }}>
+                <Card title="Recuperar contraseña" bordered={true} style={{ width: 600 }}>
                     <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                        <UnlockOutlined style={{fontSize: 150}}/>
+                        { this.state.respuesta && this.state.respuesta === this.state.respuestaInput ? <UnlockOutlined style={{fontSize: 150, color:"#049C18"}}/> : <LockOutlined style={{fontSize: 150, color:"#900C3F"}}/>}
                         <Input required allowClear name="usuario" placeholder="Usuario" size="large" onChange={this.handleInput} prefix={<UserOutlined />} />
                         <Search required allowClear name="email" onChange={this.handleInput} placeholder="Correo electrónico" onSearch={this.handleRequest} enterButton size="large" prefix={<this.email />} />
-                        <Input readOnly allowClear value={this.state.pregunta} placeholder="Pregunta de seguridad" size="large" prefix={<QuestionOutlined />} />
-                        <Input allowClear name="respuestaInput" onChange={this.handleInput} placeholder="Respuesta" size="large" prefix={<this.validarRespuesta />} />
+                        <Input 
+                            readOnly 
+                            allowClear 
+                            disabled={ this.state.pregunta ? false : true }
+                            value={this.state.pregunta} 
+                            placeholder="Pregunta de seguridad" 
+                            size="large" 
+                            prefix={<QuestionOutlined />} 
+                        />
+                        <Input 
+                            allowClear 
+                            name="respuestaInput" 
+                            disabled={ this.state.pregunta ? false : true }
+                            onChange={this.handleInput} 
+                            placeholder="Respuesta" 
+                            size="large" 
+                            prefix={ this.state.respuesta && this.state.respuesta === this.state.respuestaInput ? <UnlockOutlined style={{color:"#049C18"}}/> : <LockOutlined style={{color:"#900C3F"}}/>}
+                        />
                         <Button type="primary" onClick={this.changePassword} shape="round" icon={<RightCircleOutlined />} size='large'>
                             Cambiar contraseña
                         </Button>

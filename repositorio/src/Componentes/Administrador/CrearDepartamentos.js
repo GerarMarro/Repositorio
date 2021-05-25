@@ -14,10 +14,6 @@ const tailLayout = {
     },
 };
 
-const validateMessages = {
-    required: 'El campo ${name} es requerido',
-};
-
 class CrearDepartamentos extends React.Component {
     
     state={
@@ -75,12 +71,13 @@ class CrearDepartamentos extends React.Component {
 
     render() {
         return (
-            <Form {...layout} ref={this.formRef} name="control-ref" onFinish={this.onFinish} validateMessages={validateMessages}>
+            <Form {...layout} ref={this.formRef} name="control-ref" onFinish={this.onFinish}>
                 <Form.Item
                     name="empresa"
                     rules={[
                         {
                             required: true,
+                            message: "Este campo es requerido"
                         },
                     ]}
                 >
@@ -121,6 +118,7 @@ class CrearDepartamentos extends React.Component {
                     rules={[
                         {
                             required: true,
+                            message: "Este campo es requerido"
                         },
                     ]}
                 >
@@ -139,6 +137,7 @@ class CrearDepartamentos extends React.Component {
                                 rules={[
                                     {
                                         required: true,
+                                        message: "Este campo es requerido"
                                     },
                                 ]}
                             >

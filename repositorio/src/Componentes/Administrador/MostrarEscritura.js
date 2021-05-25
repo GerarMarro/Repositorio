@@ -42,7 +42,7 @@ class MostrarEscritura extends React.Component{
                                 Registros
                             </span>
                         } key="2">
-                            <TablaEscritura dataSource={this.state.dataSource.filter(x => x.departamento == this.props.departamento._id)} tituloempresa={this.props.tituloempresa} usuario={this.props.usuario} departamento={this.props.departamento} />
+                            <TablaEscritura dataSource={this.state.dataSource.filter(x => x.departamento === this.props.departamento._id)} tituloempresa={this.props.tituloempresa} usuario={this.props.usuario} departamento={this.props.departamento} />
                         </TabPane>
                     </Tabs>
                 </Card>

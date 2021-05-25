@@ -9,6 +9,7 @@ use App\Models\Empresas;
 use App\Models\Usuarios;
 use App\Models\Departamentos;
 use App\Mail\RestauracionContraseña; 
+use App\Mail\RestauracionContraseñaUser; 
 use App\Mail\Correo; 
 use App\Models\Logs; 
 use App\Models\Datos;
@@ -154,13 +155,30 @@ class AdministradoresController extends Controller
         
         request()->validate([
             'id' => 'required',
-            'contraseña' => 'required'
+            'contraseña' => 'required',
+            'usuario' =>'required',
         ]);
         
+        if (str_contains($request->usuario, "@")) {
+            $usuario = Usuarios::where('_id', '=', $request->id)->first();
+
+            $usuario->contraseña = $request->contraseña;
+            
+            Mail::to([$usuario->email])->send(new RestauracionContraseñaUser($usuario));
+
+            $password = md5($usuario->contraseña);
+
+            Usuarios::where('_id', '=', $request->id)
+            ->first()
+            ->update(['contraseña' => $password]);
+
+            return json_encode($usuario);   
+        }
+
         //Busca el usuario que posee el id enviado
 
         $usuario = Administradores::where('_id', '=', $request->id)->first();
-    
+        
         //Cambia la contraseña para poder enviar el correo
         $usuario->contraseña = $request->contraseña;
         

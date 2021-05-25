@@ -47,14 +47,14 @@ class Lectura extends React.Component {
   }
 
   handleOk = e => {
-    console.log(e);
+    //console.log(e);
     this.setState({
       visible: false,
     });
   };
 
   handleCancel = e => {
-    console.log(e);
+    //console.log(e);
     this.setState({
       visible: false,
     });
@@ -107,7 +107,7 @@ class Lectura extends React.Component {
                 bordered
                 pagination={{
                   onChange: page => {
-                    console.log(page);
+                    //console.log(page);
                   },
                   pageSize: 1,
                 }}
@@ -139,6 +139,7 @@ class Lectura extends React.Component {
         <Modal
           title={this.state.titulo}
           visible={this.state.visible}
+          onCancel={this.handleOk}
           destroyOnClose
           footer={
             <Button type="primary" onClick={this.handleOk}>OK</Button>

@@ -1,15 +1,17 @@
 import axios from 'axios';
-import {registrar, getPregunta, 
-        updPass, authUser, 
-        upduser, getuser, 
-        reguser, getuseradmin, 
-        deluser, getnotificaciones,
-        subirarchivo, leerarchivo,
-        todosdepartamentos, crearempresa,
-        empresasxadmin, creardepartamento,
-        organizacion, allusers,
-        datos, actualizardatos,
-        correo } from './rutas';
+import {
+    registrar, getPregunta, 
+    updPass, authUser, 
+    upduser, getuser, 
+    reguser, getuseradmin, 
+    deluser, getnotificaciones,
+    subirarchivo, leerarchivo,
+    todosdepartamentos, crearempresa,
+    empresasxadmin, creardepartamento,
+    organizacion, allusers,
+    datos, actualizardatos,
+    correo 
+} from './rutas';
 
 function Registrar(datos) {
     return axios.post(registrar, {
@@ -40,7 +42,8 @@ function GetPregunta(datos) {
 function ActualizarContra(datos, hora) {
     return axios.put(updPass, {
         id: datos.id,
-        contraseña: hora
+        contraseña: hora,
+        usuario: datos.usuario
     })
 }
 

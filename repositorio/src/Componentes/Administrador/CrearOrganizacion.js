@@ -7,9 +7,6 @@ const layout = {
     wrapperCol: { span: 0 },
 };
 
-const validateMessages = {
-    required: 'El campo ${name} es requerido',
-};
 
 const Formulario = ()=>{
     const [form] = Form.useForm();
@@ -42,14 +39,14 @@ const Formulario = ()=>{
 
     
     return (
-    <Form {...layout} name="nest-messages" onFinish={onFinish} initialValues validateMessages={validateMessages}>
-        <Form.Item name={'organizacion'} rules={[{ required: true }]}>
+    <Form {...layout} name="nest-messages" onFinish={onFinish} initialValues>
+        <Form.Item name={'organizacion'} rules={[{ required: true, message: "Este campo es requerido" }]}>
             <Input placeholder="Nombre de organización" />
         </Form.Item>
-        <Form.Item name={'lectura'} rules={[{ required: true }]}>
+        <Form.Item name={'lectura'} rules={[{ required: true, message: "Este campo es requerido" }]}>
             <Input placeholder="Departamento de lectura" />
         </Form.Item>
-        <Form.Item name={'escritura'} rules={[{ required: true }]}>
+        <Form.Item name={'escritura'} rules={[{ required: true, message: "Este campo es requerido" }]}>
             <Input placeholder="Departamento de escritura" />
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
