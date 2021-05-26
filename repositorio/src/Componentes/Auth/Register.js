@@ -1,10 +1,10 @@
 import React from 'react';
 import '../Styles/Auth.css';
 import 'material-icons';
-import { Input, Space, Card, Button, Upload, Select, message, Typography, Tree, Result, Form } from 'antd';
+import { Input, Space, Card, Button, Upload, Select, message, Typography, Tree, Result, Form, Tooltip } from 'antd';
 import { UserOutlined, EyeInvisibleOutlined, EyeTwoTone,UploadOutlined,UserAddOutlined, LockOutlined, DownOutlined  } from '@ant-design/icons';
 import {Registrar} from '../../Datos/requests';
-import { datos } from '../../Datos/rutas';
+//import { datos } from '../../Datos/rutas';
 
 const { Option } = Select;
 const { TreeNode } = Tree;
@@ -244,6 +244,7 @@ class Register extends React.Component {
                                     onChange={this.handleUpload}
                                     maxCount={1}
                                     beforeUpload={() => false}
+                                    accept=".jpg, .PNG, .JPEG"
                                 >
                                     <Button icon={<UploadOutlined />}>Subir imagen (Max: 1)</Button>
                                 </Upload>
@@ -254,6 +255,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern: "[A-Za-z]{1}",
+                                            message: "Escriba un nombre válido"
+                                        }
                                     ]}
                                 >
                                     <Input allowClear placeholder="Nombre" size="large"  prefix={<UserOutlined />} />
@@ -265,6 +270,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern: "[A-Za-z]{1}",
+                                            message: "Escriba un apellido válido"
+                                        }
                                     ]}
                                 >
                                     <Input required allowClear placeholder="Apellido" size="large" prefix={<UserOutlined />} />
@@ -273,9 +282,13 @@ class Register extends React.Component {
                                     name="usuario"
                                     rules={[
                                         {
-                                            required: true,
-                                            message: "Este campo es requerido"
+                                            required:true,
+                                            message: 'Este campo no puede ir vacío'
                                         },
+                                        {
+                                            pattern: "[A-Za-z0-9]{5,40}",
+                                            message: "El nombre de usuario debe de llevar al menos 5 letras, números y/o una @"
+                                        }
                                     ]}
                                 >
                                     <Input required allowClear placeholder="Usuario" size="large" prefix={<UserOutlined />} />
@@ -287,6 +300,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern: "[A-Za-z0-9_&-*+$%]{1,}[@]{1}[a-z]{1,}[.]{1}[a-z]{3}",
+                                            message: "El formato de correo no es correcto"
+                                        }
                                     ]}
                                 >
                                     <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
@@ -300,12 +317,19 @@ class Register extends React.Component {
                                         },
                                     ]}
                                 >
-                                    <Select required defaultValue="[Seleccione pregunta]" style={{ width: "100%" }}>
-                                        <Option value="¿Cuál es tu superheroe favorito?" key="1">¿Cuál es tu superheroe favorito?</Option>
-                                        <Option value="¿Cuál es tu trabajo soñado?" key="2">¿Cuál es tu trabajo soñado?</Option>
-                                        <Option value="¿Cuál es tu personaje favorito?" key="3">¿Cuál es tu personaje favorito?</Option>
-                                        <Option value="¿Quién es tu actor favorito?" key="4">¿Quién es tu actor favorito?</Option>
-                                    </Select>
+                                    <Tooltip title={
+                                        <>
+                                            <p><strong>¿Porqué establecer una pregunta?</strong></p>
+                                            <p>En caso de pérdida te ayudará a recuperar tus credenciales, así que no la olvides</p>
+                                        </>
+                                    } color={'red'} key={"1"}>
+                                        <Select required defaultValue="[Seleccione pregunta]" style={{ width: "100%" }}>
+                                            <Option value="¿Cuál es tu superheroe favorito?" key="1">¿Cuál es tu superheroe favorito?</Option>
+                                            <Option value="¿Cuál es tu trabajo soñado?" key="2">¿Cuál es tu trabajo soñado?</Option>
+                                            <Option value="¿Cuál es tu personaje favorito?" key="3">¿Cuál es tu personaje favorito?</Option>
+                                            <Option value="¿Quién es tu actor favorito?" key="4">¿Quién es tu actor favorito?</Option>
+                                        </Select>
+                                    </Tooltip>
                                 </Form.Item>
                                 <Form.Item 
                                     name="respuesta"
@@ -314,6 +338,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern: "[A-Za-z]{1,}",
+                                            message: "Este campo solo admite letras para ayudarte a recordar"
+                                        }
                                     ]}
                                 >
                                     <Input allowClear placeholder="Respuesta" size="large" prefix={<LockOutlined />} />
@@ -325,6 +353,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern:"[A-Za-z0-9]{1,}",
+                                            message:"Este campo solo admite letras y números"
+                                        }
                                     ]}
                                 >
                                     <Input.Password
@@ -343,6 +375,10 @@ class Register extends React.Component {
                                             required: true,
                                             message: "Este campo es requerido"
                                         },
+                                        {
+                                            pattern:"[A-Za-z0-9]{1,}",
+                                            message:"Este campo solo admite letras y números"
+                                        }
                                     ]}
                                 >
                                     <Input.Password
@@ -357,64 +393,100 @@ class Register extends React.Component {
                             </Space>
                         </Card.Grid>
                         <Card.Grid style={{width:"50%", height:"100%"}}>
-                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                                <Form.Item 
-                                    name="empresa"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Este campo es requerido"
-                                        },
-                                    ]}
-                                >
-                                    <Input allowClear name="empresa" onChange={this.handleChangeText} placeholder="Nombre de Empresa" size="large" prefix={<this.empresa />} />
-                                </Form.Item>
-                                <Form.Item 
-                                    name="lectura"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Este campo es requerido"
-                                        },
-                                    ]}
-                                >
-                                    <Input allowClear name="lectura" onChange={this.handleChangeText} placeholder="Nombre de departamento de lectura" size="large" prefix={<this.lectura />} />
-                                </Form.Item>
-                                <Form.Item 
-                                    name="escritura"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Este campo es requerido"
-                                        },
-                                    ]}
-                                >
-                                    <Input allowClear name="escritura" placeholder="Nombre de departamento de escritura" onChange={this.handleChangeText} size="large" prefix={<this.escritura />} />
-                                </Form.Item>
-                            </Space>
+                            <Tooltip 
+                                title={
+                                    <>
+                                        <p><strong>¿Porqué hago esto?</strong></p>
+                                        <p>Para el funcionamiento correcto de la aplicación se tiene que crear una organización inicial así tampoco pierdes tiempo</p>
+                                    </>
+                                } 
+                                color={'blue'} 
+                                key={"2"}
+                                overlayStyle={{width:"700px"}}
+                            >
+                                <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
+                                    <Form.Item 
+                                        name="empresa"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Este campo es requerido"
+                                            },
+                                            {
+                                                pattern:"[A-Za-z0-9]{1,}",
+                                                message:"Este campo solo admite letras y números"
+                                            }
+                                        ]}
+                                    >
+                                        <Input allowClear name="empresa" onChange={this.handleChangeText} placeholder="Nombre de Empresa" size="large" prefix={<this.empresa />} />
+                                    </Form.Item>
+                                    <Form.Item 
+                                        name="lectura"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Este campo es requerido"
+                                            },
+                                            {
+                                                pattern:"[A-Za-z0-9]{1,}",
+                                                message:"Este campo solo admite letras y números"
+                                            }
+                                        ]}
+                                    >
+                                        <Input allowClear name="lectura" onChange={this.handleChangeText} placeholder="Nombre de departamento de lectura" size="large" prefix={<this.lectura />} />
+                                    </Form.Item>
+                                    <Form.Item 
+                                        name="escritura"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Este campo es requerido"
+                                            },
+                                            {
+                                                pattern:"[A-Za-z0-9]{1,}",
+                                                message:"Este campo solo admite letras y números"
+                                            }
+                                        ]}
+                                    >
+                                        <Input allowClear name="escritura" placeholder="Nombre de departamento de escritura" onChange={this.handleChangeText} size="large" prefix={<this.escritura />} />
+                                    </Form.Item>
+                                </Space>
+                            </Tooltip>
                         </Card.Grid>
                         <Card.Grid style={{width:"50%", height:"100%"}}>
-                            <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
-                                
-                                <Paragraph strong style={{fontSize:29.5}}> 
-                                    Vista previa
-                                </Paragraph>
-
-                                <Tree
-                                    showLine
-                                    switcherIcon={<DownOutlined />}
-                                    defaultExpandedKeys={['0-0-0', '0-0-1']}
+                            <Tooltip 
+                                title={
+                                    <>
+                                        <p><strong>¿Qué es esto?</strong></p>
+                                        <p>Puedes ver una pequeña vista previa de lo que sería tu organización</p>
+                                    </>
+                                } 
+                                color={'gold'} 
+                                key={"2"}
+                                overlayStyle={{width:"700px"}}
+                            >
+                                <Space direction="vertical" style={{width:"100%", textAlign:"center"}}>
                                     
-                                >
-                                    <TreeNode title={this.state.empresa !== "" ? this.state.empresa : '[Tu empresa aquí]'} key="0-0">
-                                    <TreeNode title={this.state.lectura !== "" ? this.state.lectura : '[Departamento de lectura]'} key="0-0-0">
-                                        <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa   : '<Nombre de usuario>@<empresa>'} key="0-0-0-0" />
-                                    </TreeNode>
-                                    <TreeNode title={this.state.escritura !== "" ? this.state.escritura : '<Departamento de escritura>'} key="0-0-1">
-                                        <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa : '<Nombre de usuario>@<empresa>'} key="0-0-1-0" /></TreeNode>
-                                    </TreeNode> 
-                                </Tree>
-                            </Space> 
+                                    <Paragraph strong style={{fontSize:29.5}}> 
+                                        Vista previa
+                                    </Paragraph>
+
+                                    <Tree
+                                        showLine
+                                        switcherIcon={<DownOutlined />}
+                                        defaultExpandedKeys={['0-0-0', '0-0-1']}
+                                        
+                                    >
+                                        <TreeNode title={this.state.empresa !== "" ? this.state.empresa : '[Tu empresa aquí]'} key="0-0">
+                                        <TreeNode title={this.state.lectura !== "" ? this.state.lectura : '[Departamento de lectura]'} key="0-0-0">
+                                            <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa   : '<Nombre de usuario>@<empresa>'} key="0-0-0-0" />
+                                        </TreeNode>
+                                        <TreeNode title={this.state.escritura !== "" ? this.state.escritura : '<Departamento de escritura>'} key="0-0-1">
+                                            <TreeNode title={this.state.empresa !== "" && this.state.lectura !== "" ? "[nombre]@" + this.state.empresa : '<Nombre de usuario>@<empresa>'} key="0-0-1-0" /></TreeNode>
+                                        </TreeNode> 
+                                    </Tree>
+                                </Space> 
+                            </Tooltip>
                         </Card.Grid>
                     </Card>
                 </Form>

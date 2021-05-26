@@ -117,11 +117,18 @@ class UsuariosController extends Controller
 
     public function ActualizarDatos(Request $request){
         $datosA = Datos::where('_id', '=', $request->id)->first();
+        $titulo = $datosA->titulo;
         $datosA->update([
             "titulo" => $request->titulo,
             "descripcion" => $request->descripcion,
             "datos" => $request->datos,
             "tipo" => $request->tipo,
+        ]);
+        Logs::create([
+            'usuario' => $request->usuario,
+            'admin' => $request->admin,
+            'titulo' => "Sobreescritura de datos realizada!",
+            'descripcion' => "Se han sobreescrito los datos pertenecientes a ".$titulo
         ]);
         return response($datosA, 200);
     }

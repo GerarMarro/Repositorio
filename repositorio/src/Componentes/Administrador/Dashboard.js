@@ -24,12 +24,12 @@ class Dashboard extends React.Component {
                     <Row gutter={16} hidden={this.props.sesion === 2 ? true : false}>
                         <Col span={12} style={{height:"100%"}}>
                             <Card title="Crear Organización" style={{height:"100%"}} bordered={true}>
-                                <CrearOrganizacion />
+                                <CrearOrganizacion update={this.props.update} />
                             </Card>
                         </Col>
                         <Col span={12} style={{height:"100%"}}>
                             <Card title="Crear Departamentos" style={{height:"100%"}} bordered={true}>
-                                <CrearDepartamentos admin={this.props.admin} />
+                                <CrearDepartamentos update={this.props.update} admin={this.props.admin} />
                             </Card>
                         </Col>
                     </Row>
@@ -37,7 +37,7 @@ class Dashboard extends React.Component {
                     <Row gutter={16}>
                         <Col span={12} style={{height:"460px"}} hidden={this.props.sesion === 2 ? true : false}>
                             <Card title="Tus Organizaciones" style={{height:"100%"}} bordered={true}>
-                                <VerOrganizacion />
+                                <VerOrganizacion update={this.props.update} />
                             </Card>
                         </Col>
                         <Col span={this.props.sesion === 2 ? 24 : 12} >

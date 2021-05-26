@@ -11,6 +11,7 @@ class MostrarEscritura extends React.Component{
         dataSource: [],
 
     }
+    
     componentDidMount(){
         TodosDatos(this.props.usuario._id)
         .then(res => {
@@ -21,6 +22,10 @@ class MostrarEscritura extends React.Component{
         .catch(err => {
             console.log(err)
         })
+    }
+
+    Recargar = () =>{
+        this.componentDidMount();
     }
 
     render(){
@@ -34,7 +39,7 @@ class MostrarEscritura extends React.Component{
                                 Subir archivos
                             </span>
                         } key="1">
-                            < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.tituloempresa} />
+                            < Escritura departamento={this.props.departamento} usuario={this.props.usuario} tituloempresa={this.props.tituloempresa} reloadar={this.Recargar} />
                         </TabPane>
                         <TabPane tab={
                             <span>
@@ -42,7 +47,7 @@ class MostrarEscritura extends React.Component{
                                 Registros
                             </span>
                         } key="2">
-                            <TablaEscritura dataSource={this.state.dataSource.filter(x => x.departamento === this.props.departamento._id)} tituloempresa={this.props.tituloempresa} usuario={this.props.usuario} departamento={this.props.departamento} />
+                            <TablaEscritura reloadar={this.Recargar} dataSource={this.state.dataSource.filter(x => x.departamento === this.props.departamento._id)} tituloempresa={this.props.tituloempresa} usuario={this.props.usuario} departamento={this.props.departamento} />
                         </TabPane>
                     </Tabs>
                 </Card>

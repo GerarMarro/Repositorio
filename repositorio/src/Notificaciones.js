@@ -31,6 +31,7 @@ class Notificaciones extends React.Component {
 
     componentRender = () =>{
         if (this.state.data !== null && this.state.data !== undefined) {
+            let creado;
             return(
                 <>
                     <div className="demo-infinite-container" style={{width:"100%", height:"350px"}}>
@@ -42,19 +43,23 @@ class Notificaciones extends React.Component {
                             pagination={{
                                 pageSize: 3,
                             }}
-                            renderItem={item => (
-                            <List.Item key={item.id}>
-                                <List.Item.Meta
-                                avatar={
-                                    item.usuario_registrado !== null ? this.controllerAvatar(item.usuario_registrado, item.usuario_registrado.nombre, item.usuario_registrado.apellido) : this.controllerAvatar(item.administrador, item.administrador.nombre, item.administrador.apellido)
+                            renderItem={item => 
+                                {
+                                    creado = new Date(item.created_at);
+                                    //console.log(item)
+                                    return <List.Item key={item.id}>
+                                            <List.Item.Meta
+                                                avatar={
+                                                    item.usuario_registrado !== null ? this.controllerAvatar(item.usuario_registrado, item.usuario_registrado.nombre, item.usuario_registrado.apellido) : this.controllerAvatar(item.administrador, item.administrador.nombre, item.administrador.apellido)
+                                                }
+                                                title={<Text style={{cursor:"default"}}>{item.titulo}</Text>}
+                                                description={item.descripcion}
+                                            />
+                                            
+                                            <Text level={'6'} style={{marginLeft:"20px"}}>{ creado.toLocaleDateString() + " | " + creado.toLocaleTimeString() }</Text>
+                                        </List.Item>
                                 }
-                                title={<Text style={{cursor:"default"}}>{item.titulo}</Text>}
-                                description={item.descripcion}
-                                />
-                                
-                                <Text level={'6'} style={{marginLeft:"20px"}}>{ new Date(item.created_at).toLocaleDateString()+ " " + new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Text>
-                            </List.Item>
-                            )}
+                            }
                         >
                             {this.state.loading && this.state.hasMore && (
                                 <div className="demo-loading-container">

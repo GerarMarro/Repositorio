@@ -84,6 +84,7 @@ class MainLayout extends React.Component {
           menu: ''
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("foto", JSON.stringify(this.state.usuario.foto));
           if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
             localStorage.setItem("id", this.state.usuario.admin);  
           }else{
@@ -100,6 +101,7 @@ class MainLayout extends React.Component {
           menu: oldSession.menu
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("foto", JSON.stringify(this.state.usuario.foto));
           if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
             localStorage.setItem("id", this.state.usuario.admin);  
           }else{
@@ -124,6 +126,7 @@ class MainLayout extends React.Component {
           menu: ''
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("foto", JSON.stringify(this.state.usuario.foto));
           if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
             localStorage.setItem("id", this.state.usuario.admin);  
           }else{
@@ -140,6 +143,7 @@ class MainLayout extends React.Component {
           menu: oldSession.menu
         }, ()=>{
           localStorage.setItem("usuario", this.state.usuario.usuario);
+          localStorage.setItem("foto", JSON.stringify(this.state.usuario.foto));
           if (this.state.usuario.admin !== undefined && this.state.usuario.admin !== null) {
             localStorage.setItem("id", this.state.usuario._id);  
           }else{
@@ -163,6 +167,10 @@ class MainLayout extends React.Component {
     this.setState({
       usuario : usuario
     });
+  }
+
+  actualizar = () =>{
+    this.componentDidMount();
   }
 
   controllerContentInicio =()=>{
@@ -223,7 +231,7 @@ class MainLayout extends React.Component {
                 className="App"
                 style={this.state.session === 2 ? {height:"100%"} : {height:"1460px"}}
               >
-                <Dashboard notificaciones={this.state.notificaciones} admin={this.state.usuario} sesion={this.state.session} />
+                <Dashboard update={this.actualizar} notificaciones={this.state.notificaciones} admin={this.state.usuario} sesion={this.state.session} />
                 
               </Content>
           </>
@@ -248,7 +256,7 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
-                <Perfil usuario={this.state.usuario} color={coloresRandom()} sesion={this.state.session} actualizarUsuario={this.actualizarUsuario} />
+                <Perfil update={this.actualizar} usuario={this.state.usuario} color={coloresRandom()} sesion={this.state.session} actualizarUsuario={this.actualizarUsuario} />
                 
               </Content>
           </>
@@ -272,7 +280,7 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
-                <CrearUsuarios color={coloresRandom()} info={this.state.usuario} />
+                <CrearUsuarios update={this.actualizar} color={coloresRandom()} info={this.state.usuario} />
                 
               </Content>
           </>

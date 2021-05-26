@@ -10,6 +10,7 @@ import {
     message, Typography,
     Avatar, Breadcrumb, Modal, Form
 } from 'antd';
+import {notificacion} from '../Funciones';
 import { RegUser } from '../../Datos/requests';
 import 'material-icons';
 
@@ -84,24 +85,17 @@ class CrearUsuarios extends React.Component {
     handleUpload = ( info ) => {
 
         var file = info.fileList[0];
-        if(this.VerificateImg(file)){
-            this.foto = file;
-            this.setState({ foto : file }, ()=>{ });
-        }
+        this.foto = file;
+        this.setState({ foto : file }, ()=>{ });
     };
 
-    VerificateImg = (file) => {
-
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-          message.error('Solo puedes subir imagenes formato jpg o png!');
+    sendFile = (e) => {
+  
+        if (Array.isArray(e)) {
+          return e;
         }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-          message.error('La imagen debe ser menor a 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    }
+        return e && e.fileList;
+    };
     
     handleChangeSelect = value => {
         this.setState({ pregunta: value });
@@ -120,15 +114,17 @@ class CrearUsuarios extends React.Component {
 
     showConfirm = (values) => {  
         var Usuario = {};
+        
         if (values.contraseña !== values.confirmacion) {
             message.error("Las contraseñas no coinciden")
         }else{
+            let this2 = this;
             Usuario = {
                 foto: this.foto,
                 admin: this.usuario._id,
                 nombre: values.nombre,
                 apellido: values.apellido,
-                usuario: values.usuario + "@" +  this.state.empresas.nombre.trim(),
+                usuario: values.usuario + "@" +  this.state.empresas.nombre.replace(" ", "_"),
                 contraseña: values.contraseña,
                 email: values.email,
                 pregunta: values.pregunta,
@@ -144,20 +140,23 @@ class CrearUsuarios extends React.Component {
                   //console.log(this1.state);
                   
                   RegUser(Usuario).then(res =>{
-                      message.success({ content: 'Tu usuario ha sido creado exitosamente', key });
+                      
                       //console.log("res", res.data);
                       if (res.data === 1) {
                         message.error({ content: 'El usuario ya esta en uso', key });
                       }else if (res.data === 2) {
                         message.error({ content: 'El correo ya esta en uso', key });
                       }else{
+                        var titulo = "Registro de usuario nuevo";
+                        var descripcion = "Se ha registrado a "+Usuario.nombre+" como nuevo usuario en la base de datos.";
+                        notificacion(titulo, descripcion);
                         var sesion ={
                             header: "Crear usuarios",
                             action: "CrearUsuarios",
                             menu: '3.2'
                         }
                         localStorage.setItem('state', JSON.stringify(sesion));
-                        window.location.reload();
+                        this2.props.update();
                       }
                   }).catch(err =>{
                       message.error({ content: 'Algo salió mal', key });
@@ -213,6 +212,7 @@ class CrearUsuarios extends React.Component {
                         </Avatar>
                         <Upload
                             listType="picture"
+                            accept=".jpg, .png, .JPEG"
                             onChange={this.handleUpload}
                             maxCount={1}
                             beforeUpload={() => false}
@@ -222,17 +222,62 @@ class CrearUsuarios extends React.Component {
                     </Space>
                     <Space direction="vertical" style={{width:"70%", textAlign:"left"}}>
                         <Form onFinish={this.showConfirm}>
-                            <Form.Item name="nombre" >
-                                <Input required allowClear placeholder="Nombre" size="large"  prefix={<UserOutlined />} />    
+                            <Form.Item 
+                                name="nombre" 
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    },
+                                    {
+                                        pattern: "[A-Za-z]{1}",
+                                        message: "Escriba un nombre válido"
+                                    }
+                                ]}
+                            >
+                                <Input allowClear placeholder="Nombre" size="large"  prefix={<UserOutlined />} />    
                             </Form.Item> 
-                            <Form.Item name="apellido" >
+                            <Form.Item 
+                                name="apellido"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    },
+                                    {
+                                        pattern: "[A-Za-z]{1}",
+                                        message: "Escriba un apellido válido"
+                                    }
+                                ]}
+                            >
                                 <Input required allowClear placeholder="Apellido" size="large" prefix={<UserOutlined />} />   
                             </Form.Item> 
                             <Input.Group compact style={{width:"100%"}}>
-                                <Form.Item name="usuario" style={{width:"70%"}} >
+                                <Form.Item 
+                                    name="usuario" 
+                                    style={{width:"70%"}} 
+                                    rules={[
+                                        {
+                                            required:true,
+                                            message: 'Este campo no puede ir vacío'
+                                        },
+                                        {
+                                            pattern: "[A-Za-z0-9]{5,40}",
+                                            message: "El nombre de usuario debe de llevar al menos 5 letras"
+                                        }
+                                    ]}
+                                >
                                     <Input required allowClear placeholder="Usuario" size="large" prefix={<UserOutlined />} />
                                 </Form.Item>
-                                <Form.Item style={{width:"30%"}}>
+                                <Form.Item 
+                                    style={{width:"30%"}}
+                                    rules={[
+                                        { 
+                                          required: true, 
+                                          message: "Este campo es requerido" 
+                                        }
+                                      ]}
+                                >
                                     <Select 
                                         defaultValue="[Empresas]"
                                         size="large"
@@ -240,17 +285,38 @@ class CrearUsuarios extends React.Component {
                                     >
 
                                         {this.usuario.empresas.map((e, index)=>
-                                            <Option key={index} value={e._id}>@{e.nombre.trim()}</Option>
+                                            <Option key={index} value={e._id}>@{e.nombre.replace(" ", "_")}</Option>
                                         )}
                                     </Select>
                                 </Form.Item>
                                 
                             </Input.Group>
-                            <Form.Item name="email" >
-                                <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
+                            <Form.Item 
+                                name="email" 
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    },
+                                    {
+                                        pattern: "[A-Za-z0-9_&-*+$%]{1,}[@]{1}[a-z]{1,}[.]{1}[a-z]{3}",
+                                        message: "El formato de correo no es correcto"
+                                    }
+                                ]}
+                            >
+                                <Input allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
                             </Form.Item>
-                            <Form.Item name="departamento" initialValue="[Escoge departamento]">
-                                <Select required 
+                            <Form.Item 
+                                name="departamento" 
+                                initialValue="[Escoge departamento]"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    }
+                                ]}
+                            >
+                                <Select  
                                     disabled={this.activarDep}
                                     size="large"
                                     key="Departamentos" 
@@ -263,33 +329,71 @@ class CrearUsuarios extends React.Component {
                                 
                                 </Select>
                             </Form.Item>
-                            <Form.Item name="pregunta" initialValue="[Puedes dejar que el usuario cambie su pregunta despues]" >
+                            <Form.Item name="pregunta" initialValue={null} >
                                 <Select 
                                     key="Preguntas"
                                     size="large"
-                                    style={{ width: "100%" }} 
-                                    onChange={this.handleChangeSelect}
+                                    style={{ width: "100%" }}
+                                    rules={[
+                                        {
+                                            required: false
+                                        }
+                                    ]}
                                 >
+                                    <Option value={null}>[Puedes dejar que el usuario cambie su pregunta despues]</Option>
                                     <Option value="¿Cuál es tu superheroe favorito?">¿Cuál es tu superheroe favorito?</Option>
                                     <Option value="¿Cuál es tu trabajo soñado?">¿Cuál es tu trabajo soñado?</Option>
                                     <Option value="¿Cuál es tu personaje favorito?">¿Cuál es tu personaje favorito?</Option>
                                     <Option value="¿Quién es tu actor favorito?">¿Quién es tu actor favorito?</Option>
                                 </Select>
                             </Form.Item>
-                            <Form.Item name="respuesta">
+                            <Form.Item 
+                                name="respuesta"
+                                rules={[
+                                    {
+                                        required: false
+                                    }
+                                ]}
+                            >
                                <Input allowClear placeholder="Respuesta" size="large" prefix={<UnlockOutlined />} />
                             </Form.Item>
-                            <Form.Item name="contraseña">
+                            <Form.Item 
+                                name="contraseña"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    },
+                                    {
+                                        pattern:"[A-Za-z0-9]{1,}",
+                                        message:"Este campo solo admite letras y números"
+                                    }
+                                ]}
+                            >
                                 <Input.Password
                                     size="large"
+                                    name="contraseña"
                                     placeholder="Ingrese su nueva contraseña"
                                     iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                                     prefix={<this.checkPwd />}
                                 />
                             </Form.Item>
-                            <Form.Item name="confirmacion">
+                            <Form.Item 
+                                name="confirmacion"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Este campo es requerido"
+                                    },
+                                    {
+                                        pattern:"[A-Za-z0-9]{1,}",
+                                        message:"Este campo solo admite letras y números"
+                                    }
+                                ]}
+                            >
                                 <Input.Password
                                     size="large"
+                                    name="confirmacion"
                                     placeholder="Repita su contraseña"
                                     iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                                     prefix={<this.checkPwd />}

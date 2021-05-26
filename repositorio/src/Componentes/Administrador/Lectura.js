@@ -1,11 +1,12 @@
 import React from 'react';
 import { leerArchivo, todosDepartamentos } from '../../Datos/requests';
-import { Card, Select, Space, Button, Breadcrumb, List, Descriptions, Modal } from 'antd';
+import { Card, Select, Space, Button, Breadcrumb, List, Descriptions, Modal, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons'
 import VerDatos from './verDatos';
 import '../../../src/App.css';
 
 const { Option } = Select;
+const { Title } = Typography;
 
 class Lectura extends React.Component {
     
@@ -41,8 +42,10 @@ class Lectura extends React.Component {
       this.setState({
         datos: res.data.reverse()
       }, ()=>{
-        //console.log(this.state.datos)
+        console.log(this.state.datos);
       })
+    }).catch(err =>{
+      console.log(err);
     })
   }
 
@@ -60,17 +63,6 @@ class Lectura extends React.Component {
     });
   };
   
-  showModal = (e) => {
-    
-    this.setState({
-      verdata: JSON.parse(e.target.name),
-      visible: true,
-      titulo: e.target.id
-    }, ()=>{/*console.log(this.state.verdata)*/});
-  };
-
-
-
   bread = 
   ( 
       <Breadcrumb>
@@ -115,13 +107,19 @@ class Lectura extends React.Component {
                 renderItem={item => 
                   <List.Item>
                   <List.Item.Meta
-                    title={<a href={'#'} onClick={this.showModal} style={{color:"#0049B6"}} id={item.titulo} name={item.datos}>{item.titulo}</a>}
+                    title={<Title onClick={() =>{
+                      this.setState({
+                        verdata: JSON.parse(item.datos),
+                        visible: true,
+                        titulo: item.titulo
+                      }, ()=>{/*console.log(this.state.verdata)*/});
+                    }} style={{color:"#0049B6", cursor:"pointer"}} level={3}>{item.titulo}</Title>}
                     description={
                     <>
                       <Space direction="vertical" style={{width:"100%"}}>
                         <Descriptions bordered>
                           <Descriptions.Item label="Tipo">{item.tipo}</Descriptions.Item>
-                          <Descriptions.Item label="Creado por">{ item.usuarioprop ? item.administrador.nombre : item.usuarioprop.nombre }</Descriptions.Item>
+                          <Descriptions.Item label="Creado por">{ item.usuarioprop === null ? item.administrador.nombre : item.usuarioprop.nombre }</Descriptions.Item>
                           <Descriptions.Item label="Subido en">{new Date(item.created_at).toLocaleDateString()}</Descriptions.Item>
                           <Descriptions.Item label="A las">{ new Date(item.created_at).getHours()+":"+new Date(item.created_at).getMinutes()}</Descriptions.Item>
                           <Descriptions.Item label="Descripción">{ item.descripcion}</Descriptions.Item>

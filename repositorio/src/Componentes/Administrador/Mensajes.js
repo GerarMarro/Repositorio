@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Button, Input, message, Select } from 'antd';
 import { AllUsers, EnviarCorreo } from '../../Datos/requests';
 import '../../../src/App.css';
+import {notificacion} from '../Funciones';
 
 //const { TextArea } = Input;
 
@@ -12,9 +13,6 @@ const layout = {
     wrapperCol: { span: 0 },
 };
 
-const validateMessages = {
-    required: 'El campo ${name} es requerido',
-};
 
 class Mensajes extends React.Component {
     state = {
@@ -46,7 +44,9 @@ class Mensajes extends React.Component {
         }
         EnviarCorreo(datos)
         .then(res => {
-            message.success("correo enviado")
+            var titulo = "El correo ha sido enviado"
+            var descripcion = "Su correo ha sido enviado a todos los destinatarios, espera su respuesta!";
+            notificacion(titulo, descripcion);
         })
         .catch(err =>{
             console.log(err)
@@ -58,7 +58,7 @@ class Mensajes extends React.Component {
 
         return (
             <>
-                <Form {...layout} name="nest-messages" onFinish={this.onFinish} initialValues validateMessages={validateMessages}>
+                <Form {...layout} name="nest-messages" onFinish={this.onFinish} initialValues>
                     <Form.Item name="para" key="para" rules={[{ required: true }]}>
                         <Select
                             placeholder="Para"
@@ -94,10 +94,25 @@ class Mensajes extends React.Component {
                             )}
                         </Select>
                     </Form.Item>
-                    <Form.Item name="asunto" rules={[{ required: true }]}>
+                    <Form.Item 
+                        name="asunto" 
+                        ules={[
+                            {
+                                required: true,
+                                message: "Este campo es requerido"
+                            },
+                            {
+                                pattern: "[A-Za-z]{1,}",
+                                message: "Este campo solo admite letras"
+                            }
+                        ]}
+                    >
                         <Input placeholder="Asunto" />
                     </Form.Item>
-                    <Form.Item name="mensaje">
+                    <Form.Item 
+                        name="mensaje"
+                        
+                    >
                         <Input.TextArea placeholder="Mensaje" rows={4} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>

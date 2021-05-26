@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Input, Button, Space, Modal } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined } from '@ant-design/icons';
 import Escritura from './Escritura';
 
 class TablaEscritura extends React.Component {
@@ -145,11 +145,19 @@ class TablaEscritura extends React.Component {
                 ...this.getColumnSearchProps('actualizado'),
             },
             {
-                title: 'Acción',
                 key: 'action',
                 render: (text) => (
                     <Space size="middle">
-                        <a name={JSON.stringify(text)} onClick={this.handleShow} type="link">Editar</a>
+                        <EditOutlined 
+                        style={{color:"#045D9C"}}
+                        onClick={() =>{
+                            this.setState({
+                                visible: true,
+                                dato: text
+                    
+                            }, () => {/*console.log(this.state.dato) */} )
+                        }}
+                         />
                     </Space>
                 ),
             },
@@ -160,7 +168,6 @@ class TablaEscritura extends React.Component {
                 <Table
                     columns={columns}
                     dataSource={this.props.dataSource}
-                    
                     pagination={{ position: ["bottomCenter"], pageSize: 3 }}
                 />
                 <Modal 
@@ -168,7 +175,7 @@ class TablaEscritura extends React.Component {
                     visible={this.state.visible} 
                     onOk={this.handleOk} 
                     onCancel={this.handleCancel} 
-                    width={6000}
+                    width={850}
                     destroyOnClose={true}
                     footer={[]} 
                 >
@@ -178,6 +185,7 @@ class TablaEscritura extends React.Component {
                         tituloempresa={this.props.tituloempresa} 
                         datos={this.state.dato}
                         cancel={this.handleCancel}
+                        reloadar={this.props.reloadar}
                     />
                 </Modal>
             </>

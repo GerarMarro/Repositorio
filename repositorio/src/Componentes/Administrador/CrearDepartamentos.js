@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
 import { empresasxAdmin, crearDepartamento } from '../../Datos/requests';
+import {notificacion} from '../Funciones';
 
 const { Option } = Select;
 const layout = {
@@ -43,29 +44,28 @@ class CrearDepartamentos extends React.Component {
             empresa: values.empresa,
             admin: localStorage.getItem('id')
         }
+        
         crearDepartamento(datos)
         .then(res =>{
-            message.success("Departamento creado");
+            var titulo = "Creación de nuevo departamento";
+            var descripcion = "Se ha creado el nuevo departamento "+datos.nombre+" para la empresa "+this.state.empresas.filter(x => x._id===values.empresa)[0].nombre;
+            notificacion(titulo, descripcion);
             var sesion ={
                 header: "Dashboard",
                 action: "Dashboard",
                 menu: '1'
             }
             localStorage.setItem('state', JSON.stringify(sesion));
-            window.location.reload();
+            this.onReset();
+            this.props.update();
         })
         .catch(err =>{
             console.log(err);
         })
     };
+
     onReset = () => {
         this.formRef.current.resetFields();
-    };
-    onFill = () => {
-        this.formRef.current.setFieldsValue({
-            note: 'Hello world!',
-            gender: 'male',
-        });
     };
     
 
@@ -82,9 +82,7 @@ class CrearDepartamentos extends React.Component {
                     ]}
                 >
                     <Select
-                    
                         placeholder="Selecciona una organización"
-                        onChange={this.onGenderChange}
                         allowClear
                     >
                         { this.state.empresas.map((e, index)=>
@@ -120,31 +118,13 @@ class CrearDepartamentos extends React.Component {
                             required: true,
                             message: "Este campo es requerido"
                         },
+                        {
+                            pattern:"[A-Za-z0-9]{1,}",
+                            message:"Este campo solo admite letras y números"
+                        }
                     ]}
                 >
                     <Input placeholder="Nombre de departamento" />
-                </Form.Item>
-                
-                <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) => prevValues.gender !== currentValues.gender}
-                >
-                    {({ getFieldValue }) =>
-                        getFieldValue('departamento') === 'other' ? (
-                            <Form.Item
-                                name="customizeGender"
-                                label="Customize Gender"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Este campo es requerido"
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        ) : null
-                    }
                 </Form.Item>
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit">

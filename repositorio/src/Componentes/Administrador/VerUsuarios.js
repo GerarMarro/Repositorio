@@ -1,18 +1,16 @@
 import React from 'react';
 import { Table, Input, Button, message, Breadcrumb, Card, Modal, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReloadOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { GetUserAdmin, DelUser } from '../../Datos/requests';
 import UserInfo from './InformacionUser';
+import {notificacion} from '../Funciones';
 
 const key = 'updatable';
 const { confirm } = Modal;
 
 class VerUsuarios extends React.Component {
-  constructor(props){
-    super(props);
-    this.handleModal = this.handleModal.bind(this);
-  }
+
   state = {
       searchText: '',
       searchedColumn: '',
@@ -102,15 +100,6 @@ class VerUsuarios extends React.Component {
     clearFilters();
     this.setState({ searchText: '' });
   };
-  
-  handleModal = (event) =>{
-    
-    this.setState({
-      visible:true,
-      verUser: JSON.parse(event.target.name)
-    }, () =>{})
-    
-  }
 
   handleOk = () => {
     
@@ -119,33 +108,6 @@ class VerUsuarios extends React.Component {
     });
   };
 
-  showConfirm = (event) => {
-    var usuario = JSON.parse(event.target.name), nombre = usuario.nombre, id = usuario._id, admin=this.props.id;
-    //console.log(admin);
-    //  var elim = false;
-    confirm({
-      title: '¿Está seguro que desea eliminar a '+nombre+'?',
-      content: 'Si elimina este usuario no podrá recuperarse ya que se eliminará completamente de la base de datos',
-      onOk() {
-        message.loading({ content: 'Esperamos que sepas lo que haces...', key });
-        DelUser(id, admin)
-        .then(res => { 
-          setTimeout( message.success({ content: 'Usuarios eliminado correctamente!', key }), 2000000);
-          var sesion ={
-            header: "Ver usuarios",
-            action: "VerUsuarios",
-            menu: '3.1'
-        }
-        localStorage.setItem('state', JSON.stringify(sesion));
-          window.location.reload();
-        })
-        .catch(error =>{
-          message.error({ content: 'Algo salió mal', key });
-          console.error(error);
-        })
-      }
-    });
-  }
   bread = 
   ( 
       <Breadcrumb>
@@ -186,9 +148,37 @@ class VerUsuarios extends React.Component {
         render: (record) => (
           <span>
             <span>
-              <a href={'#'}  onClick={this.handleModal} style={{color:"#07C5FF"}} name={JSON.stringify(record)}>Ver a {record.nombre}</a>
+              <EyeOutlined onClick={() =>{
+                this.setState({
+                  visible:true,
+                  verUser: record
+                }, () =>{})
+              }} 
+              style={{color:"#07C5FF"}} />
               <Divider type="vertical" />
-              <a href={'#'} onClick={this.showConfirm} style={{color:"#DF2605"}} name={JSON.stringify(record)}>Eliminar</a>
+              <DeleteOutlined onClick={() =>{
+                 var admin = this.props.id;
+                 let this2 = this;
+                 confirm({
+                   title: '¿Está seguro que desea eliminar a '+record.nombre+'?',
+                   content: 'Si elimina este usuario no podrá recuperarse ya que se eliminará completamente de la base de datos',
+                   onOk() {
+                     message.loading({ content: 'Esperamos que sepas lo que haces...', key });
+                     DelUser(record._id, admin)
+                     .then(res => { 
+                      var titulo ="Eliminación de usuario.";
+                      var descripcion ="Se ha eliminado a " + record.nombre
+                      notificacion(titulo, descripcion);
+                       
+                      this2.componentDidMount();
+                     })
+                     .catch(error =>{
+                       message.error({ content: 'Algo salió mal', key });
+                       console.error(error);
+                     })
+                   }
+                 });
+              }} style={{color:"#DF2605"}} />
             </span>
           </span>
         )

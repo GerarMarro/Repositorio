@@ -10,7 +10,7 @@ import {
     empresasxadmin, creardepartamento,
     organizacion, allusers,
     datos, actualizardatos,
-    correo 
+    correo, modificarnom
 } from './rutas';
 
 function Registrar(datos) {
@@ -180,7 +180,9 @@ function sobreDatos(datos) {
             titulo: datos.titulo,
             descripcion: datos.descripcion,
             datos: datos.datos,
-            tipo: datos.tipo
+            tipo: datos.tipo,
+            usuario: datos.usuario,
+            admin: datos.admin
         }
     });
 }
@@ -195,6 +197,15 @@ function EnviarCorreo(datos) {
             asunto: datos.asunto,
             mensaje: datos.mensaje
         }
+    });
+}
+
+function ModificarOrgDep(datos) {
+    return axios.put(modificarnom, {
+        nombre: datos.nombre,
+        tipo: datos.tipo,
+        id: datos.id,
+        usuario: datos.usuario
     });
 }
 
@@ -219,5 +230,6 @@ export {
     AllUsers,
     TodosDatos,
     sobreDatos,
-    EnviarCorreo
+    EnviarCorreo,
+    ModificarOrgDep
 };

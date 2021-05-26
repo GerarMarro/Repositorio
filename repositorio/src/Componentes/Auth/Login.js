@@ -17,12 +17,6 @@ class Login extends React.Component {
     }
     user = "";
     contraseña = "";
-    /*
-    state = {
-        usuario: "",
-        constraseña: "",
-    }
-    */
 
     changeInput = (event) =>{
         if (event.target.name === "usuario") {
@@ -92,7 +86,11 @@ class Login extends React.Component {
                                         rules={[
                                             {
                                                 required:true,
-                                                message:"El campo usuario no puede ir vacío"
+                                                message: 'Este campo no puede ir vacío'
+                                            },
+                                            {
+                                                pattern: "[A-Za-z0-9|@]{5,40}",
+                                                message: "El nombre de usuario debe de llevar al menos 5 letras, números y/o una @"
                                             }
                                         ]}    
                                     >
@@ -107,10 +105,11 @@ class Login extends React.Component {
                                         name="contraseña" 
                                         rules={[{
                                             required:true,
-                                            message: "El campo contraseña no puede ir vacío"
+                                            message: 'Este campo no puede ir vacío'
                                         }]}
                                     >
                                         <Input.Password
+                                            type="password"
                                             allowClear
                                             size="large"
                                             placeholder="Contraseña"

@@ -337,7 +337,7 @@ class AdministradoresController extends Controller
             Logs::create([
                 'usuario' => $request->_id,
                 'admin' => $request->_id,
-                'titulo' => "Modificar usuario",
+                'titulo' => "Usuario Modificado",
                 'descripcion' => "Se ha modificado a ".$admin->nombre."."
             ]);
             return json_encode($admin); 
@@ -482,7 +482,7 @@ class AdministradoresController extends Controller
         Logs::create([
             'usuario' => $request->admin,
             'admin' => $request->admin,
-            'titulo' => "Creación de nueva organización",
+            'titulo' => "Creación de nueva organización completada sin errores",
             'descripcion' => "Se ha creado la organización ".$empresa->nombre."."
         ]);
 
@@ -566,6 +566,32 @@ class AdministradoresController extends Controller
         return $request;
     }
     
-     
+    public function ModificarObj(Request $request){
+        $tipo = $request->tipo;
+        $nombre = "";
+        if ($tipo=="o") {
+            $empresa = Empresas::where('_id', '=', $request->id)->first();
+            $nombre =  $empresa->nombre;
+            $empresa->nombre = $request->nombre;
+            $empresa->save();
+            Logs::create([
+                'usuario' => $request->usuario,
+                'admin' => $request->usuario,
+                'titulo' => "Se ha modificado la organización " . $nombre,
+                'descripcion' => "Se ha modificado la organización de ".$nombre." a ".$empresa->nombre."."
+            ]);
+        }else{
+            $departamento = Departamentos::where('_id', '=', $request->id)->first();
+            $nombre = $departamento->nombre;
+            $departamento->nombre = $request->nombre;
+            $departamento->save();
+            Logs::create([
+                'usuario' => $request->usuario,
+                'admin' => $request->usuario,
+                'titulo' => "Se ha modificado el departamento " . $nombre,
+                'descripcion' => "Se ha modificado el departamento de ".$nombre." a ".$request->nombre."."
+            ]);
+        }
+    }
 }
 

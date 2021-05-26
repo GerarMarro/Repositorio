@@ -21,6 +21,7 @@ class UserInfo extends React.Component {
                 </div>
                 
                 <Descriptions bordered title={"Información de "+ this.usuario.nombre} size="small" layout="vertical">
+                    
                     <Descriptions.Item label="Nombre" style={{textAlign:"center"}}>{this.usuario.nombre}</Descriptions.Item>
                     <Descriptions.Item label="Apellido" style={{textAlign:"center"}}>{this.usuario.apellido}</Descriptions.Item>
                     <Descriptions.Item label="Usuario" style={{textAlign:"center"}}>{this.usuario.usuario}</Descriptions.Item>
@@ -28,7 +29,7 @@ class UserInfo extends React.Component {
                     <Descriptions.Item label="Email" style={{textAlign:"center"}}>{this.usuario.email}</Descriptions.Item>
                     <Descriptions.Item label="Tipo" style={{textAlign:"center"}}> { this.usuario.tipo === 0 ? <Text>Lectura</Text> : <Text>Escritura</Text>}</Descriptions.Item>
                     <Descriptions.Item label="Pregunta de seguridad" style={{textAlign:"center"}}>
-                        { this.usuario.pregunta === null ? <Text>No tiene pregunta configurada</Text> : <Text>El usuario ya tiene un pregunta configurada</Text>}
+                        { this.usuario.pregunta ? <Text>El usuario ya tiene una pregunta configurada</Text> : <Text>El usuario aún no tiene una pregunta configurada</Text>}
                     </Descriptions.Item>
                 </Descriptions>
             </>
