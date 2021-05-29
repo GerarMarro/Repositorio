@@ -34,6 +34,7 @@ const Formulario = ({update}) =>{
             }
             localStorage.setItem('state', JSON.stringify(sesion));
             update();
+            window.location.reload();
         }).catch(err =>{
             message.error("Algo salió mal!")
             console.log(err);

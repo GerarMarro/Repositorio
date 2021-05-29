@@ -10,7 +10,8 @@ import {
     empresasxadmin, creardepartamento,
     organizacion, allusers,
     datos, actualizardatos,
-    correo, modificarnom
+    correo, modificarnom,
+    moddependencies, eliminarobj
 } from './rutas';
 
 function Registrar(datos) {
@@ -209,6 +210,27 @@ function ModificarOrgDep(datos) {
     });
 }
 
+function ModDependencias(datos) {
+    return axios.put(moddependencies, {
+        nombreuser: datos.nombre,
+        idnewdep: datos.departamento,
+        empresa: datos.isempresa,
+        id: datos.id,
+        admin: localStorage.getItem("id"),
+        oldemp: datos.oldemp,
+        olddep: datos.olddep,
+        newemp: datos.newemp,
+        newdep: datos.newdep
+    });
+}
+
+function EliminarObjeto(tipo, id) {
+    return axios.put(eliminarobj+ id, {
+        tipo: tipo,
+        usuario: localStorage.getItem("id")
+    });
+}
+
 export {
     Registrar,
     GetPregunta,
@@ -231,5 +253,7 @@ export {
     TodosDatos,
     sobreDatos,
     EnviarCorreo,
-    ModificarOrgDep
+    ModificarOrgDep,
+    ModDependencias,
+    EliminarObjeto
 };

@@ -21,6 +21,8 @@ var datos = ApiRoot + "datos/";
 var actualizardatos = ApiRoot + "actualizardatos";
 var correo = ApiRoot + "correo";
 var modificarnom = ApiRoot + "modificarnom";
+var moddependencies = ApiRoot + "moddependencies";
+var eliminarobj = ApiRoot + "eliminarobj/";
 
 export default ApiRoot;
 export {
@@ -45,5 +47,7 @@ export {
     datos,
     actualizardatos,
     correo,
-    modificarnom
+    modificarnom,
+    moddependencies,
+    eliminarobj
 };

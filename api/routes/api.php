@@ -30,3 +30,5 @@ Route::get('datos/{id}/{departamento}', 'App\Http\Controllers\UsuariosController
 Route::get('actualizardatos', 'App\Http\Controllers\UsuariosController@ActualizarDatos');
 Route::get('correo', 'App\Http\Controllers\AdministradoresController@EnviarCorreo');
 Route::put('modificarnom', 'App\Http\Controllers\AdministradoresController@ModificarObj');
+Route::put('moddependencies', 'App\Http\Controllers\UsuariosController@ActualizarDependencias');
+Route::put('eliminarobj/{id}', 'App\Http\Controllers\AdministradoresController@EliminarObj');

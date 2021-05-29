@@ -396,6 +396,10 @@ class AdministradoresController extends Controller
         $usuarios = $admin->usuarios;
 
         foreach ($usuarios as $u) {
+            $departamentoI = Departamentos::where('_id', '=', $u->departamento)->first();
+            $u->empresa = Empresas::where('_id', '=', $departamentoI->propietario)->first();
+            $u->empresa->departamentos;
+            $u->idDep = $departamentoI->_id;
             $u->departamento = Departamentos::where('_id', '=', $u->departamento)->first()->nombre;
         }
 
@@ -491,6 +495,9 @@ class AdministradoresController extends Controller
 
     public function EmpresasxAdmin($id){
         $empresas = Empresas::where('propietario', '=', $id)->get();
+        foreach ($empresas as $e) {
+            $e->departamentos = $e->departamentos;
+        }
         return response(json_encode($empresas), 200);
     }
 
@@ -592,6 +599,46 @@ class AdministradoresController extends Controller
                 'descripcion' => "Se ha modificado el departamento de ".$nombre." a ".$request->nombre."."
             ]);
         }
+    }
+
+    public function EliminarObj(Request $request, $id){
+        $tipo = $request->tipo;
+        if ($tipo=="o") {
+            $organizacion = Empresas::where('_id', '=', $id)->first();
+            $nombre = $organizacion->nombre;
+            $departamentos = $organizacion->departamentos;
+            foreach ($departamentos as $d) {
+                $usuarios = $d->usuarios;
+                foreach ($usuarios as $u) {
+                    $u->delete();
+                }
+                $d->delete();
+            }
+            $organizacion->delete();
+            Logs::create([
+                'usuario' => $request->usuario,
+                'admin' => $request->usuario,
+                'titulo' => "Se ha eliminado la organización " . $nombre,
+                'descripcion' => "Se ha eliminado la organización ".$nombre." Correctamente."
+            ]);
+            return response("Eliminado", 200);
+        }else{
+            $departamento = Departamentos::where('_id', '=', $id)->first();
+            $nombre = $departamento->nombre;
+            $usuarios = $departamento->usuarios;
+            foreach ($usuarios as $u) {
+                $u->delete();
+            }
+            $departamento->delete();
+            Logs::create([
+                'usuario' => $request->usuario,
+                'admin' => $request->usuario,
+                'titulo' => "Se ha eliminado el departamento " . $nombre,
+                'descripcion' => "Se ha eliminado el departamento ".$nombre." Correctamente."
+            ]);
+            return response("Eliminado", 200);
+        }
+            
     }
 }
 

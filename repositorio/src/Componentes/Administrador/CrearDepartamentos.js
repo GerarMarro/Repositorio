@@ -58,6 +58,7 @@ class CrearDepartamentos extends React.Component {
             localStorage.setItem('state', JSON.stringify(sesion));
             this.onReset();
             this.props.update();
+            window.location.reload();
         })
         .catch(err =>{
             console.log(err);

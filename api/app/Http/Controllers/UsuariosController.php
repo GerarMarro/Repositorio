@@ -132,5 +132,31 @@ class UsuariosController extends Controller
         ]);
         return response($datosA, 200);
     }
+
+    public function ActualizarDependencias(Request $request){
+        $usuario = Usuarios::where('_id', '=', $request->id)->first();
+        if ($request->empresa) {
+            $usuario->usuario = $request->nombreuser;
+            $usuario->departamento = $request->idnewdep;
+            Logs::create([
+                'usuario' => $request->id,
+                'admin' => $request->admin,
+                'titulo' => "Transferencia de usuario",
+                'descripcion' => "Se ha transferido a " .$usuario->nombre. " " .$usuario->apellido." de la empresa ".$request->oldemp." a " . 
+                $request->newemp. " en el departamento de " .$request->newdep
+            ]);
+        }else{
+            $usuario->departamento = $request->idnewdep;
+            Logs::create([
+                'usuario' => $request->id,
+                'admin' => $request->admin,
+                'titulo' => "Transferencia de usuario",
+                'descripcion' => "Se ha transferido a ".$usuario->nombre." ".$usuario->apellido." del departamento ".
+                $request->olddep." a " .$request->newdep
+            ]);
+        }
+        
+        $usuario->save();
+    }
     
 }

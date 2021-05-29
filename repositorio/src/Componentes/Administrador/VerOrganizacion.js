@@ -1,12 +1,13 @@
 import React from 'react';
-import { Collapse, List, Typography, Avatar, Modal, Form, Input, Button, Radio } from 'antd';
+import { Collapse, List, Typography, Avatar, Modal, Form, Input, Button, Radio, message } from 'antd';
 import '../../../src/App.css';
-import { SettingOutlined } from '@ant-design/icons';
-import { Organizacion, ModificarOrgDep } from '../../Datos/requests';
+import { SettingOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Organizacion, ModificarOrgDep, EliminarObjeto } from '../../Datos/requests';
 import {coloresRandom, notificacion } from '../Funciones';
 
 const { Panel } = Collapse;
 const { Text } = Typography;
+const { confirm } = Modal;
 
 class VerOrganizacion extends React.Component {
 
@@ -15,7 +16,9 @@ class VerOrganizacion extends React.Component {
         modal: false,
         nombre: "",
         id: "",
-        cambio: ""
+        cambio: "",
+        departamento: [],
+        empresa: {}
     }
 
     componentDidMount(){
@@ -76,6 +79,78 @@ class VerOrganizacion extends React.Component {
         })
     }
 
+    validarTipo0 = () => {
+        if ( this.state.cambio === "o") {
+            return true;
+        }else {
+            let tipo0 = this.state.empresa.departamentos.filter(x=>x.tipo === 0);
+            if (this.state.departamento.tipo === 0 && tipo0.length > 1) {
+                return true;
+            }else{
+                let tipo1 = this.state.empresa.departamentos.filter(x=>x.tipo === 1);
+                if (tipo1.length > 1 && this.state.departamento.tipo === 1) {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+    }
+
+    eliminarObj = () =>{
+        let this2 = this;
+        var descripcion = "";let titulo = ""; let descripcionNoti = "";
+        if (this.state.cambio === "o") {
+            descripcion = "Una vez eliminada la organización no se podrán recuperar los datos pérdidos, recuerda que eliminarás tanto departamentos como usuarios, puedes transferirlos en el área de ver usuarios pero te sugerimos que mejor no elimines esto";
+            titulo = "Se ha eliminado la organización " + this.state.nombre;
+            descripcionNoti = "Se ha eliminado la organización de "+this.state.nombre+" correctamente.";
+        }else{
+            descripcion = "Una vez eliminado el departamento se eliminarán también los usuarios contenidos dentro de ellos, puedes transferirlos en el área de ver usuarios pero te sugerimos que mejor no elimines esto";
+            titulo = "Se ha eliminado el departamento " + this.state.nombre;
+            descripcionNoti = "Se ha eliminado el departamento "+this.state.nombre+" correctamente.";
+        }
+        confirm({
+            title: '¿Estás completamente seguro de que quieres eliminar esto?',
+            icon: <CloseCircleOutlined style={{color:"red"}} />,
+            content: descripcion,
+            okText: 'Sí, estoy seguro',
+            okType: 'danger',
+            okButtonProps:{
+                type:"primary"
+            },
+            cancelText: 'Cancelar',
+            onOk() {
+                message.loading("Eliminando dependencias, esto puede durar un poco...")
+                if (this2.validarTipo0()) {
+                    console.log("Entro")
+                    EliminarObjeto(this2.state.cambio, this2.state.id)
+                    .then(res=>{
+                        localStorage.setItem('state', JSON.stringify(sesion));
+                        this2.componentDidMount();
+                        this2.props.update();
+                        this2.setModalInvisible();
+                        notificacion(titulo, descripcionNoti);
+                    })
+                    .catch(err =>{
+                        console.log(err);
+                        message.error("Algo salió mal.");
+                    })
+                    var sesion ={
+                        header: "Dashboard",
+                        action: "Dashboard",
+                        menu: '1'
+                    }   
+                }else{
+                    message.error("Una empresa con menos de 2 departamentos no es posible, eliminala toda o cambiale nombre.")
+                }   
+            },
+            onCancel() {
+                this2.setModalInvisible();
+            },
+
+          });
+    }
+
     render() {
         return (
             <div className="org">
@@ -97,7 +172,9 @@ class VerOrganizacion extends React.Component {
                                         this.setState({
                                             nombre: d.nombre,
                                             id: d._id,
-                                            cambio: "d"
+                                            cambio: "d",
+                                            departamento: d,
+                                            empresa: e
                                         });
                                         this.setModalVisible();
                                     }}/>}>
@@ -162,7 +239,8 @@ class VerOrganizacion extends React.Component {
                             </Form.Item>
                             <Form.Item style={{textAlign:"end"}}>
                                 <Button type="primary" htmlType="submit">Guardar</Button>
-                                <Button danger onClick={this.setModalInvisible}>Cancelar</Button>
+                                <Button type="primary" danger style={{marginLeft:"4px"}} onClick={this.eliminarObj}>Eliminar</Button>
+                                <Button type="primary" style={{backgroundColor:"#ED9703", marginLeft:"4px"}} onClick={this.setModalInvisible}>Cancelar</Button>
                             </Form.Item>
                         </Form>
                     </Modal>

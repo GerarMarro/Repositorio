@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Button, Input, message, Select } from 'antd';
 import { AllUsers, EnviarCorreo } from '../../Datos/requests';
+import { SendOutlined } from '@ant-design/icons';
 import '../../../src/App.css';
 import {notificacion} from '../Funciones';
 
@@ -116,7 +117,7 @@ class Mensajes extends React.Component {
                         <Input.TextArea placeholder="Mensaje" rows={4} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" icon={<SendOutlined />}>
                             Enviar
                         </Button>
                     </Form.Item>
