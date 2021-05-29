@@ -640,5 +640,19 @@ class AdministradoresController extends Controller
         }
             
     }
+
+    public function createDB($id){
+        //return $request->nombre;
+        $comando = "mongodump --db emergentes --out C:/mongodump/".$id;
+        shell_exec($comando);
+        return response($id, 200);
+    }
+
+    public function restoreDB(Request $request){
+        $ruta = $request->ruta;
+        $comando = "mongorestore --db emergentes C:/mongodump/".$ruta;
+        shell_exec($comando);
+        return response("Hecho", 200);
+    }
 }
 

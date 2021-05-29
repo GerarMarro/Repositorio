@@ -3,7 +3,7 @@ import '.././Componentes/Styles/Auth.css';
 import { Layout, Menu, Typography, Avatar, Popover, Badge, message, Skeleton } from 'antd';
 import { ContactsOutlined, TeamOutlined, BankOutlined,
   ReadOutlined, UploadOutlined, UserOutlined, UserAddOutlined, 
-  UnlockOutlined, LogoutOutlined, DashboardOutlined } from '@ant-design/icons';
+  UnlockOutlined, LogoutOutlined, DashboardOutlined, DatabaseOutlined } from '@ant-design/icons';
 import React from 'react';
 import 'material-icons';
 import descarga from '../descarga.png';
@@ -17,7 +17,8 @@ import CrearUsuarios from './Administrador/CrearUsuarios';
 import Controller from './Administrador/ControllerDepartments';
 import Perfil from './Perfil';
 import Notificaciones from '../Notificaciones';
-import {GetUser, GetNotificaciones} from '../Datos/requests';
+import Database from './Administrador/Database';
+import {GetUser, GetNotificaciones } from '../Datos/requests';
 import {coloresRandom} from './Funciones';
 
 const { Header, Sider, Content } = Layout;
@@ -285,6 +286,18 @@ class MainLayout extends React.Component {
               </Content>
           </>
         );
+      }else if (this.state.action === "Database") {
+        
+        return(
+          <>
+            <Content
+                className="site-card-border-less-wrapper"
+              >
+                <Database />
+                
+              </Content>
+          </>
+        );
       }
 
     }
@@ -378,7 +391,10 @@ class MainLayout extends React.Component {
           <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.setState({ action: "Perfil", header: "Perfil", menu:'4'})}>
             Perfil
           </Menu.Item>
-          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() =>{ 
+          <Menu.Item key="5" icon={<DatabaseOutlined />} onClick={() => this.setState({ action: "Database", header: "Database", menu:'5'})}>
+            Bases de datos
+          </Menu.Item>
+          <Menu.Item key="7" icon={<LogoutOutlined />} onClick={() =>{ 
             this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' });
             localStorage.clear();
             }}>

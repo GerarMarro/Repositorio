@@ -11,7 +11,8 @@ import {
     organizacion, allusers,
     datos, actualizardatos,
     correo, modificarnom,
-    moddependencies, eliminarobj
+    moddependencies, eliminarobj,
+    createdb,restoredb
 } from './rutas';
 
 function Registrar(datos) {
@@ -26,7 +27,7 @@ function Registrar(datos) {
         respuesta: datos.respuesta,
         empresa: datos.empresa,
         lectura: datos.lectura,
-        escritura: datos.escritura
+        escritura: datos.escritura,
     })
 }
 
@@ -231,6 +232,14 @@ function EliminarObjeto(tipo, id) {
     });
 }
 
+function crearBackup(nombre) {
+    return axios.get(createdb+nombre);
+}
+
+function restaurarBK(ruta) {
+    return axios.get(restoredb + ruta);
+}
+
 export {
     Registrar,
     GetPregunta,
@@ -255,5 +264,7 @@ export {
     EnviarCorreo,
     ModificarOrgDep,
     ModDependencias,
-    EliminarObjeto
+    EliminarObjeto,
+    crearBackup,
+    restaurarBK
 };

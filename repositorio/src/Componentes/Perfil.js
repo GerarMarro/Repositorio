@@ -81,6 +81,13 @@ class Perfil extends React.Component {
         )
     }
 
+    componentDidMount(){
+        this.setState({
+            propsU: this.props.usuario,
+            propsD: this.usuario.foto
+        })
+    }
+
     //Guardo los datos enviados desde el main
     usuario = this.props.usuario;
     foto = this.usuario.foto;
@@ -131,10 +138,16 @@ class Perfil extends React.Component {
             message.error("Las contraseñas no coinciden")
         }else{
             message.loading({ content: 'Estamos actualizando tu usuario', key });
-        
+            console.log(values)
+            var foto = [];
+            if (values.fotico === undefined) {
+                foto = this.state.foto;
+            }else{
+                foto = values.fotico[0];
+            }
             var upd = {
                 _id: this.state.id,
-                foto: values.fotico[0],
+                foto: foto,
                 nombre: values.nombre,
                 apellido: values.apellido,
                 email: values.email,
@@ -150,9 +163,11 @@ class Perfil extends React.Component {
                 var titulo = "Usuario Modificado";
                 var descripcion = "Se ha modificado a " + this.usuario.nombre +"."
                 notificacion(titulo, descripcion);
-                this.setState({
-                    foto: values.fotico[0]
-                })
+                if (values.fotico !== undefined) {
+                    this.setState({
+                        foto: values.fotico[0]
+                    })
+                }
                 this.onReset();
                 this.actualizarMain()
             }).catch(err =>{
@@ -168,7 +183,8 @@ class Perfil extends React.Component {
         .then(res => {
             this.props.actualizarUsuario(res.data);
             this.foto = this.state.foto;
-
+            this.usuario = this.state;
+            console.log(this.usuario)
         }).catch(err =>{
             message.error({ content: 'Algo salió mal, intenta reiniciar la sesión', key, duration: 2 });
         });
