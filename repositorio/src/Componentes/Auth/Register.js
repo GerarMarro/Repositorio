@@ -4,6 +4,7 @@ import 'material-icons';
 import { Input, Space, Card, Button, Upload, Select, message, Typography, Tree, Result, Form, Tooltip } from 'antd';
 import { UserOutlined, EyeInvisibleOutlined, EyeTwoTone,UploadOutlined,UserAddOutlined, LockOutlined, DownOutlined  } from '@ant-design/icons';
 import {Registrar} from '../../Datos/requests';
+import { datos } from '../../Datos/rutas';
 //import { datos } from '../../Datos/rutas';
 
 const { Option } = Select;
@@ -118,6 +119,8 @@ class Register extends React.Component {
                 }
                 
             }
+            console.log(this.datos)
+            
             Registrar(this.datos)
             .then(res => {
                 if (res.data === 1001) {
@@ -287,7 +290,7 @@ class Register extends React.Component {
                                         },
                                         {
                                             pattern: "[A-Za-z0-9]{5,40}",
-                                            message: "El nombre de usuario debe de llevar al menos 5 letras, números y/o una @"
+                                            message: "El nombre de usuario debe de llevar al menos 5 letras"
                                         }
                                     ]}
                                 >
@@ -308,29 +311,32 @@ class Register extends React.Component {
                                 >
                                     <Input required allowClear placeholder="Correo electrónico" size="large" prefix={<this.email />} />
                                 </Form.Item>
-                                <Form.Item 
-                                    name="pregunta"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Este campo es requerido"
-                                        },
-                                    ]}
-                                >
-                                    <Tooltip title={
-                                        <>
-                                            <p><strong>¿Porqué establecer una pregunta?</strong></p>
-                                            <p>En caso de pérdida te ayudará a recuperar tus credenciales, así que no la olvides</p>
-                                        </>
-                                    } color={'red'} key={"1"}>
-                                        <Select required defaultValue="[Seleccione pregunta]" style={{ width: "100%" }}>
-                                            <Option value="¿Cuál es tu superheroe favorito?" key="1">¿Cuál es tu superheroe favorito?</Option>
-                                            <Option value="¿Cuál es tu trabajo soñado?" key="2">¿Cuál es tu trabajo soñado?</Option>
-                                            <Option value="¿Cuál es tu personaje favorito?" key="3">¿Cuál es tu personaje favorito?</Option>
-                                            <Option value="¿Quién es tu actor favorito?" key="4">¿Quién es tu actor favorito?</Option>
-                                        </Select>
-                                    </Tooltip>
-                                </Form.Item>
+                                <Tooltip title={
+                                    <>
+                                        <p><strong>¿Porqué establecer una pregunta?</strong></p>
+                                        <p>En caso de pérdida te ayudará a recuperar tus credenciales, así que no la olvides</p>
+                                    </>
+                                } color={'red'} key={"1"}>
+                                    <Form.Item 
+                                        name="pregunta"
+                                        initialValue={null}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Este campo es requerido"
+                                            },
+                                        ]}
+                                    >
+                                            <Select style={{ width: "100%" }}>
+                                                <Option value={null}>[Pregunta de Seguridad]</Option>
+                                                <Option value="¿Cuál es tu superheroe favorito?" key="1">¿Cuál es tu superheroe favorito?</Option>
+                                                <Option value="¿Cuál es tu trabajo soñado?" key="2">¿Cuál es tu trabajo soñado?</Option>
+                                                <Option value="¿Cuál es tu personaje favorito?" key="3">¿Cuál es tu personaje favorito?</Option>
+                                                <Option value="¿Quién es tu actor favorito?" key="4">¿Quién es tu actor favorito?</Option>
+                                            </Select>
+                                        
+                                    </Form.Item>
+                                </Tooltip>
                                 <Form.Item 
                                     name="respuesta"
                                     rules={[

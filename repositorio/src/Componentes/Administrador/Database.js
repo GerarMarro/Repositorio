@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Row, Button, message, Table, Typography, Modal } from 'antd';
-import { FolderAddOutlined, UndoOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Row, Button, message, Table, Typography, Modal, Tooltip } from 'antd';
+import { FolderAddOutlined, UndoOutlined, RetweetOutlined } from '@ant-design/icons';
 import { crearBackup, restaurarBK, getDbs } from '../../Datos/requests';
 
 const {Text} = Typography;
@@ -82,19 +82,23 @@ class Database extends React.Component{
         {
             title: 'Acciones',
             render: (record) =>{
-                return <CheckOutlined style={{color:"green", cursor:"pointer"}} onClick={ () =>{
-                    message.loading("Restaurando...");
-                    console.log(record)
-                    restaurarBK(record.nombre)
-                    .then(res =>{
-                        message.success("Base de datos recuperada");
-                        window.location.reload();
-                        this.props.cerrarSesion();
-                    })
-                    .catch(err =>{
-                        message.error("Algo salió mal.")
-                    })
-                }} />
+                return (
+                    <Tooltip title="Restaurar Base de datos" color={'green'} key={1}>
+                        <RetweetOutlined style={{color:"green", cursor:"pointer"}} onClick={ () =>{
+                            message.loading("Restaurando...");
+                            console.log(record)
+                            restaurarBK(record.nombre)
+                            .then(res =>{
+                                message.success("Base de datos recuperada");
+                                window.location.reload();
+                                this.props.cerrarSesion();
+                            })
+                            .catch(err =>{
+                                message.error("Algo salió mal.")
+                            })
+                        }} />
+                    </Tooltip>
+                )
             }
         }
     ];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Button, message, Breadcrumb, Card, Modal, Divider } from 'antd';
+import { Table, Input, Button, message, Breadcrumb, Card, Modal, Divider, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, ReloadOutlined, DeleteOutlined, EyeOutlined, SyncOutlined } from '@ant-design/icons';
 import { GetUserAdmin, DelUser } from '../../Datos/requests';
@@ -176,26 +176,32 @@ class VerUsuarios extends React.Component {
         render: (record) => (
           <span>
             <span>
-              <EyeOutlined onClick={() =>{
-                this.setState({
-                  visible:true,
-                  cambiar: false,
-                  verUser: record
-                }, () =>{})
-              }} 
-              style={{color:"#07C5FF"}} />
-              <Divider type="vertical" />
-                <SyncOutlined style={{color:"#ED9703", cursor:"pointer"}} onClick={() =>{
+              <Tooltip title="Ver usuario" color={'#07C5FF'} key={1}>
+                <EyeOutlined onClick={() =>{
                   this.setState({
                     visible:true,
-                    cambiar: true,
+                    cambiar: false,
                     verUser: record
                   }, () =>{})
-                }} />
+                }} 
+                style={{color:"#07C5FF"}} />
+              </Tooltip>
               <Divider type="vertical" />
-              <DeleteOutlined onClick={() =>{
-                this.deleteUser(record)
-              }} style={{color:"#DF2605"}} />
+                <Tooltip title="Transferir usuario" color={'#ED9703'} key={2}>
+                  <SyncOutlined style={{color:"#ED9703", cursor:"pointer"}} onClick={() =>{
+                    this.setState({
+                      visible:true,
+                      cambiar: true,
+                      verUser: record
+                    }, () =>{})
+                  }} />
+                </Tooltip>
+              <Divider type="vertical" />
+              <Tooltip title="Eliminar usuario" color={'#DF2605'} key={3}>
+                <DeleteOutlined onClick={() =>{
+                  this.deleteUser(record)
+                }} style={{color:"#DF2605"}} />
+              </Tooltip>
             </span>
           </span>
         )

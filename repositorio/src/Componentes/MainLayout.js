@@ -48,7 +48,7 @@ class MainLayout extends React.Component {
       
     }else{
       message.success({ content: 'Ninguna sesión encontrada', key });
-      setTimeout(this.setState({isLoading:false}), 20000000)
+      setTimeout(this.setState({isLoading:false}), 2000)
       
     }
   }

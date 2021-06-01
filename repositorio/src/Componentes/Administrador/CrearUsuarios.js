@@ -157,7 +157,7 @@ class CrearUsuarios extends React.Component {
                         }
                         localStorage.setItem('state', JSON.stringify(sesion));
                         this2.props.update();
-                        this.formRef.current.resetFields();
+                        window.location.reload();
                       }
                   }).catch(err =>{
                       message.error({ content: 'Algo salió mal', key });
@@ -200,8 +200,6 @@ class CrearUsuarios extends React.Component {
         </Breadcrumb>
     )
 
-    formRef = React.createRef();
-
     render(){
         var letras = "NU";
         return(
@@ -224,7 +222,7 @@ class CrearUsuarios extends React.Component {
                         </Upload>
                     </Space>
                     <Space direction="vertical" style={{width:"70%", textAlign:"left"}}>
-                        <Form ref={this.formRef} onFinish={this.showConfirm}>
+                        <Form onFinish={this.showConfirm}>
                             <Form.Item 
                                 name="nombre" 
                                 rules={[

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Button, Space, Modal } from 'antd';
+import { Table, Input, Button, Space, Modal, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined } from '@ant-design/icons';
 import Escritura from './Escritura';
@@ -136,28 +136,34 @@ class TablaEscritura extends React.Component {
                 title: 'Creado',
                 dataIndex: 'creado',
                 key: 'creado',
-                ...this.getColumnSearchProps('creado'),
+                sorter: (a, b) => {
+                    return new Date(a.created_at) - new Date(b.created_at)
+                },
             },
             {
                 title: 'Actualizado',
                 dataIndex: 'actualizado',
                 key: 'actualizado',
-                ...this.getColumnSearchProps('actualizado'),
+                sorter: (a, b) => {
+                    return new Date(a.updated_at) - new Date(b.updated_at)
+                },
             },
             {
                 key: 'action',
                 render: (text) => (
                     <Space size="middle">
-                        <EditOutlined 
-                        style={{color:"#045D9C"}}
-                        onClick={() =>{
-                            this.setState({
-                                visible: true,
-                                dato: text
-                    
-                            }, () => {/*console.log(this.state.dato) */} )
-                        }}
-                         />
+                        <Tooltip title="Sobreescribir datos" color={'#045D9C'} key={1}>
+                            <EditOutlined 
+                            style={{color:"#045D9C"}}
+                            onClick={() =>{
+                                this.setState({
+                                    visible: true,
+                                    dato: text
+                        
+                                }, () => {/*console.log(this.state.dato) */} )
+                            }}
+                            />
+                        </Tooltip>
                     </Space>
                 ),
             },
