@@ -25,6 +25,7 @@ var moddependencies = ApiRoot + "moddependencies";
 var eliminarobj = ApiRoot + "eliminarobj/";
 var createdb = ApiRoot + "createdb/";
 var restoredb = ApiRoot + "restoredb/";
+var getdb = ApiRoot + "getdb";
 
 export default ApiRoot;
 export {
@@ -53,5 +54,6 @@ export {
     moddependencies,
     eliminarobj,
     createdb,
-    restoredb
+    restoredb,
+    getdb
 };

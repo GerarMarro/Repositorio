@@ -14,6 +14,7 @@ use App\Mail\Correo;
 use App\Models\Logs; 
 use App\Models\Datos;
 use App\Models\CorreoMail;  
+use App\Models\Database;  
 
 class AdministradoresController extends Controller
 {
@@ -645,12 +646,20 @@ class AdministradoresController extends Controller
         //return $request->nombre;
         $comando = "mongodump --db emergentes --out C:/mongodump/".$id;
         shell_exec($comando);
+        Database::create([
+            'nombre' => $id
+        ]);
         return response($id, 200);
     }
 
-    public function restoreDB(Request $request){
-        $ruta = $request->ruta;
-        $comando = "mongorestore --db emergentes C:/mongodump/".$ruta;
+    public function getDb(){
+        $retauracion = Database::get();
+        return response($retauracion, 200);
+    }
+
+    public function restoreDB($ruta){
+        $comando =  "mongorestore --drop -d emergentes C:/mongodump/".$ruta."/emergentes";
+        //$comando = "mongorestore --db emergentes C:/mongodump/".$ruta."/emergentes";
         shell_exec($comando);
         return response("Hecho", 200);
     }

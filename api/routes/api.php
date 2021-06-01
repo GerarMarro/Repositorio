@@ -33,4 +33,5 @@ Route::put('modificarnom', 'App\Http\Controllers\AdministradoresController@Modif
 Route::put('moddependencies', 'App\Http\Controllers\UsuariosController@ActualizarDependencias');
 Route::put('eliminarobj/{id}', 'App\Http\Controllers\AdministradoresController@EliminarObj');
 Route::get('createdb/{id}', 'App\Http\Controllers\AdministradoresController@createDB');
+Route::get('getdb', 'App\Http\Controllers\AdministradoresController@getDb');
 Route::get('restoredb/{ruta}', 'App\Http\Controllers\AdministradoresController@restoreDB');

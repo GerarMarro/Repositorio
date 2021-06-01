@@ -12,7 +12,7 @@ import {
     datos, actualizardatos,
     correo, modificarnom,
     moddependencies, eliminarobj,
-    createdb,restoredb
+    createdb,restoredb, getdb
 } from './rutas';
 
 function Registrar(datos) {
@@ -240,6 +240,10 @@ function restaurarBK(ruta) {
     return axios.get(restoredb + ruta);
 }
 
+function getDbs() {
+    return axios.get(getdb);
+}
+
 export {
     Registrar,
     GetPregunta,
@@ -266,5 +270,6 @@ export {
     ModDependencias,
     EliminarObjeto,
     crearBackup,
-    restaurarBK
+    restaurarBK,
+    getDbs
 };

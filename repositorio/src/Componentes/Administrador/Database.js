@@ -1,27 +1,41 @@
 import React from 'react';
-import { Card, Row, Button, message, Upload, Typography } from 'antd';
-import { FolderAddOutlined, UndoOutlined } from '@ant-design/icons';
-import { crearBackup, restaurarBK } from '../../Datos/requests';
+import { Card, Row, Button, message, Table, Typography, Modal } from 'antd';
+import { FolderAddOutlined, UndoOutlined, CheckOutlined } from '@ant-design/icons';
+import { crearBackup, restaurarBK, getDbs } from '../../Datos/requests';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 class Database extends React.Component{
 
     state={
         files: [],
+        modal: false,
+        data: []
     }
+
+    componentDidMount(){
+        getDbs()
+        .then(res =>{
+            this.setState({ data: res.data })
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+    }
+
     generarBk = () =>{
         message.loading("Generando...");
         var hoy = new Date();
         var hora = String(hoy.getHours()) + String(hoy.getMinutes()) + String(hoy.getSeconds());
         crearBackup(hora)
         .then(res =>{
-            message.success("Backup generado: C:/mongodump/hora", );
+            message.success("Backup generado: C:/mongodump/" + hora, );
         })
         .catch(err =>{
             message.error("Algo salió mal");
             console.error(err);
         })
+        this.componentDidMount();
     }
 
     restaurarBaKp = (ruta)=>{
@@ -35,6 +49,55 @@ class Database extends React.Component{
         })
     }
 
+    closeModa = () =>{
+        this.setState({
+            modal: false
+        })
+    }
+
+    columns = [
+        {
+          title: 'Id',
+          dataIndex: '_id',
+          key: "id"
+        },
+        {
+          title: 'Fecha',
+          dataIndex: 'created_at',
+          key: "fecha",
+          defaultSortOrder: 'ascend',
+          sorter: (a, b) => {
+              return new Date(a.created_at) - new Date(b.created_at)
+            },
+          render: (record) => {
+              return <Text>{new Date(record).toLocaleDateString()}</Text>
+          }
+        },
+        {
+          title: 'Nombre',
+          dataIndex: 'nombre',
+          key: "nombre",
+          onFilter: (value, record) => record.address.indexOf(value) === 0,
+        },
+        {
+            title: 'Acciones',
+            render: (record) =>{
+                return <CheckOutlined style={{color:"green", cursor:"pointer"}} onClick={ () =>{
+                    message.loading("Restaurando...");
+                    console.log(record)
+                    restaurarBK(record.nombre)
+                    .then(res =>{
+                        message.success("Base de datos recuperada");
+                        window.location.reload();
+                        this.props.cerrarSesion();
+                    })
+                    .catch(err =>{
+                        message.error("Algo salió mal.")
+                    })
+                }} />
+            }
+        }
+    ];
     render() {
         return (
             <>
@@ -52,52 +115,24 @@ class Database extends React.Component{
                             style={{textAlign:"center", width:"50%"}} 
                             key="2  "
                         >
-                            <Card title="Crear Backup">
-                                <Upload 
-                                    directory
-                                    maxCount={1}
-                                    showUploadList={false}
-                                    onPreview={()=>{
-                                        return false;
-                                    }}
-                                    
-                                   //customRequest={  }
-                                    beforeUpload={(directory) =>{
-                                        this.setState({
-                                            files: this.state.files.push(directory)
-                                        });
-                                        if (this.state.files.length === 1) {
-                                            var ruta = String(this.state.files[0].webkitRelativePath).split("/");
-                                            if (ruta.length !== 3 && ruta[1] !== "emergentes") {
-                                                alert("Se tiene que escoger una ruta válida")
-                                                message.error("Se tiene que ecoger una ruta válida")
-                                                return false;
-                                            }else{
-                                                restaurarBK(ruta[0])
-                                                .then(res=>{
-                                                    message.success("BD restaurada");
-                                                    window.location.reload();
-                                                })
-                                                .catch(err =>{
-                                                    message.error("Algo salió mal")
-                                                })
-                                                return false;
-                                            }
-                                        }
-                                       //restaurarBK(directory.webkitRelativePath);
-                                        return false;
-                                    }}
-                                >
-                                    <Button type="primary" icon={<UndoOutlined />}>Restaurar BD</Button>
-                                </Upload>
-                                <br />
-                                { this.state.files.length ? 
-                            <Text>{this.state.files[0].webkitRelativePath}</Text>: 
-                            <Text>Seleccione carpeta</Text>}
+                            <Card title="Restaurar Backup">
+                                <Button type="primary" onClick={ () => {this.setState({modal:true})}} icon={<UndoOutlined />}>Restaurar BD</Button>
                             </Card>
                         </Card.Grid>
                     </Row>
                 </Card>
+                <Modal 
+                    visible={this.state.modal}
+                    onCancel={this.closeModa}
+                    width={1000}
+                    footer={
+                        <>
+                            <Button onClick={this.closeModa}>Cancelar</Button>
+                        </>
+                    }
+                >
+                    <Table columns={this.columns} dataSource={this.state.data} pagination={{pageSize: 5}} />
+                </Modal>
             </>
         )
     }

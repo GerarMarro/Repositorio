@@ -293,7 +293,11 @@ class MainLayout extends React.Component {
             <Content
                 className="site-card-border-less-wrapper"
               >
-                <Database />
+                <Database cerrarSesion={() =>{ 
+                  this.setState({ action: "Ingresar", header: "Ingresar", session:0, usuario: null, menu:'1' });
+                  localStorage.clear();
+                  }} 
+                />
                 
               </Content>
           </>
