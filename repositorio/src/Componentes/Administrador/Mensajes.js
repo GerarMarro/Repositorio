@@ -33,6 +33,8 @@ class Mensajes extends React.Component {
         })
     };
 
+    formRef = React.createRef();
+
     onFinish = (values) => {
         message.loading("Enviando mensaje")
         var datos ={
@@ -48,6 +50,7 @@ class Mensajes extends React.Component {
             var titulo = "El correo ha sido enviado"
             var descripcion = "Su correo ha sido enviado a todos los destinatarios, espera su respuesta!";
             notificacion(titulo, descripcion);
+            this.formRef.current.resetFields();
         })
         .catch(err =>{
             console.log(err)
@@ -59,7 +62,7 @@ class Mensajes extends React.Component {
 
         return (
             <>
-                <Form {...layout} name="nest-messages" onFinish={this.onFinish} initialValues>
+                <Form {...layout} name="nest-messages" ref={this.formRef} onFinish={this.onFinish} initialValues>
                     <Form.Item name="para" key="para" rules={[{ required: true }]}>
                         <Select
                             placeholder="Para"
